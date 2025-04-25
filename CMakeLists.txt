@@ -7,12 +7,30 @@ project(Exchange VERSION 1.0)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# Add the executable
-add_executable(exchange
+# Define source files
+set(SOURCES
+    main.cpp
     exchange.cpp
+    database.cpp
 )
 
-target_include_directories(exchange SYSTEM PRIVATE /usr/local/boost_1_88_0)
+# Define header files (optional but good practice)
+set(HEADERS
+    exchange.hpp
+    database.hpp
+)
+
+# Add the executable with all source files
+add_executable(exchange ${SOURCES} ${HEADERS})
+
+# Add include directories
+target_include_directories(exchange SYSTEM PRIVATE
+        /usr/local/boost_1_88_0         # For Boost
+)
+
+target_include_directories(exchange PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}     # For local headers
+)
 
 # Enhanced compiler flags for strict compilation
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -34,18 +52,3 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         -O1
     )
 endif()
-
-# MSVC-specific strict flags
-if(MSVC)
-    target_compile_options(exchange PRIVATE
-        /W4        # Use warning level 4
-        /WX        # Treat warnings as errors
-        /permissive-  # Strict standards compliance
-    )
-endif()
-
-# Add include directories if needed
-# target_include_directories(exchange PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-# Link libraries if needed
-# target_link_libraries(exchange PRIVATE some_library)
