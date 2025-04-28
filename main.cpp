@@ -3,6 +3,25 @@
 #include "exchange.hpp"
 
 int main() {
+    exchange::Exchange exchange;
+
+    // Create a stock with shares
+    exchange.createStock("TechCorp", {"TechShare1", "TechShare2", "TechShare3"});
+
+    // create an order
+    exchange.createOrder("User1", exchange::OrderType::BUY, "TechCorp", "TechShare1", 9, 49);
+    exchange.createOrder("User2", exchange::OrderType::BUY, "TechCorp", "TechShare2", 10, 50);
+    exchange.createOrder("User2", exchange::OrderType::BUY, "TechCorp", "TechShare3", 10, 1);
+
+
+    auto totalOrders {exchange.totalOrders()};
+
+    std::cout << "Total orders: " << totalOrders << std::endl;
+
+    return 0;
+}
+
+void stressTest() {
     // Create an order
     exchange::Exchange exchange;
 
@@ -57,6 +76,4 @@ int main() {
     }
 
     std::cout << "Total orders after filling: " << exchange.totalOrders() << std::endl;
-
-    return 0;
 }

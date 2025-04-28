@@ -5,13 +5,14 @@
 #include <map>
 #include <vector>
 #include <memory>
-#include <iostream>
 #include <unordered_set>
 #include <optional>
 #include <ranges>
 
 #include <boost/uuid.hpp>
 #include "database.hpp"
+
+#include <iostream>
 
 namespace exchange {
 
@@ -156,6 +157,44 @@ bool Share::addOrder(const std::shared_ptr<Order>& order) {
     return true;
 }
 
+int Share::tryFillOrder(const std::shared_ptr<Order>& order) {
+    int totalFilled{0};
+    std::vector<int> queuesToRemove;
+
+    if (order->type == OrderType::BUY) {
+        for (auto& [price, queue] : sellOrders) {
+            if (price > order->priceOrderedAt || order->isFilled()) break;
+
+            int filledAmount = queue.fillOrders(order->getLeftToOrder());
+            totalFilled += order->fill(filledAmount, price);
+
+            if (queue.isEmpty()) {
+                queuesToRemove.push_back(price);
+            }
+        }
+        for (int price : queuesToRemove) {
+            sellOrders.erase(price);
+        }
+    }
+    else if (order->type == OrderType::SELL) {
+        for (auto& [price, queue] : std::views::reverse(buyOrders)) {
+            if (price < order->priceOrderedAt || order->isFilled()) break;
+
+            int filledAmount = queue.fillOrders(order->getLeftToOrder());
+            totalFilled += order->fill(filledAmount, price);
+
+            if (queue.isEmpty()) {
+                queuesToRemove.push_back(price);
+            }
+        }
+        for (int price : queuesToRemove) {
+            buyOrders.erase(price);
+        }
+    }
+
+    return totalFilled;
+}
+
 bool Share::removeOrder(const std::shared_ptr<Order>& order) {
     if (order->type == OrderType::BUY) {
         if(!buyOrders[order->priceOrderedAt].removeOrder(order)) {
@@ -204,54 +243,43 @@ bool Share::enoughAvailableSharesToSell(int amount, int price) const {
     return availableShares >= amount;
 }
 
-int Share::getBestSellPrice() const {
-    return buyOrders.empty() ? 0 : buyOrders.rbegin()->first;
-}
-int Share::getBestBuyPrice() const {
-    return sellOrders.empty() ? maxDenominations + 1 : sellOrders.begin()->first;
-}
-
-int Share::tryFillOrder(const std::shared_ptr<Order>& order) {
-    int totalFilled{0};
-    std::vector<int> queuesToRemove;
-
-    if (order->type == OrderType::BUY) {
-        for ( auto& [price, queue] : sellOrders) {
-            if (price > order->priceOrderedAt || order->isFilled()) break;
-
-            // fill Orders in orderbook
-            int filledAmount = queue.fillOrders(order->getLeftToOrder());
-
-            // fill the order were trying to fill
-            totalFilled += order->fill(filledAmount, price);
-
-            if (queue.isEmpty()) {
-                queuesToRemove.push_back(price);
-            }
-        }
-        for (int price : queuesToRemove) {
-            sellOrders.erase(price);
-        }
-    }
-    else if (order->type == OrderType::SELL) {
-        for (auto& [price, queue] : std::views::reverse(buyOrders)) {
-            if (price < order->priceOrderedAt || order->isFilled()) break;
-
-            int filledAmount = queue.fillOrders(order->getLeftToOrder());
-            totalFilled += order->fill(filledAmount, price);
-
-            if (queue.isEmpty()) {
-                queuesToRemove.push_back(price);
-            }
-        }
-        for (int price : queuesToRemove) {
-            buyOrders.erase(price);
-        }
+bool Share::fillToMatch(int amount, int price) {
+    if (!buyOrders.contains(price)) {
+        return false;
     }
 
-    return totalFilled;
+    auto& queue {buyOrders.at(price)};
+    if (queue.getShareCount() < amount) {
+        return false;
+    }
+
+    return queue.fillOrders(amount) == amount;
 }
 
+std::vector<std::pair<int, int>> Share::getBuySummary() const {
+    std::vector<std::pair<int, int>> priceAmount;
+    for (const auto& [price, queue] : buyOrders) {
+        priceAmount.emplace_back(price, queue.getShareCount());
+    }
+    return priceAmount;
+}
+std::vector<std::pair<int, int>> Share::getSellSummary() const {
+    std::vector<std::pair<int, int>> priceAmount;
+    for (const auto& [price, queue] : sellOrders) {
+        priceAmount.emplace_back(price, queue.getShareCount());
+    }
+    return priceAmount;
+}
+
+std::pair<int, int> Share::maxBuyPriceAndAmount() const {
+    auto highestEntry = buyOrders.rbegin();
+
+    if (highestEntry == buyOrders.rend()) {
+        return {0, 0};
+    }
+
+    return {highestEntry->first, highestEntry->second.getShareCount()};
+}
 
 Stock::Stock(const std::string& _name, const std::vector<std::string>& shareNames) :
     name{_name} {
@@ -268,7 +296,70 @@ bool Stock::addOrder(const std::shared_ptr<Order>& order) {
         return false; // Share not found
     }
 
+    if (order->type == OrderType::BUY) {
+        tryMatchOrder(order);
+        if (order->isFilled()) {
+            return false; // order already filled
+        }
+    }
+
     return shareOpt.value().get().addOrder(order);
+}
+
+void Stock::tryMatchOrder(const std::shared_ptr<Order>& order) {
+    std::vector<std::pair<int, int>> maxPricesAndAmounts;
+
+    auto priceSum = [](std::vector<std::pair<int, int>> pairList) {
+        int sum {0};
+        for (auto& [price, amount] : pairList) {
+            sum += price;
+        }
+        return sum;
+    };
+
+    auto lowestAmount = [](std::vector<std::pair<int, int>> pairList) {
+        int lowest {pairList[0].second};
+        for (auto& [price, amount] : pairList) {
+            if (amount != 0 && amount < lowest) {
+                lowest = amount;
+            }
+        }
+        return lowest;
+    };
+
+    for (auto share : shares) {
+        if (share.name != order->shareName) {
+            maxPricesAndAmounts.emplace_back(share.maxBuyPriceAndAmount());
+        }
+    }
+
+    int sum {priceSum(maxPricesAndAmounts)};
+
+    while (sum + order->priceOrderedAt >= maxDenominations) {
+        if (order->isFilled()) {
+            break;
+        }
+        int minAmount = lowestAmount(maxPricesAndAmounts);
+        if (minAmount == 0) {
+            break;
+        }
+
+        order->fill(minAmount, maxDenominations - sum);
+
+        size_t i {0};
+        for (auto& share : shares) {
+            if (share.name != order->shareName) {
+                share.fillToMatch(minAmount, maxPricesAndAmounts[i].first);
+                ++i;
+            }
+        }
+
+        maxPricesAndAmounts.clear();
+        for (auto& share : shares) {
+            maxPricesAndAmounts.emplace_back(share.maxBuyPriceAndAmount());
+        }
+        sum = priceSum(maxPricesAndAmounts);
+    }
 }
 
 bool Stock::removeOrder(const std::shared_ptr<Order>& order) {

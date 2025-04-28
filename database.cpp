@@ -1,4 +1,6 @@
 #include <string>
+#include <iostream>
+
 #include "exchange.hpp"
 #include "database.hpp"
 
@@ -41,6 +43,19 @@ void removeFunds(const std::string& userId, int amount) {
 void uploadFinishedOrder(const exchange::Order* order) {
     // Placeholder for uploading the order to the database
     // In a real implementation, this would update the order status in db
+    std::string buysell = (order->type == exchange::OrderType::BUY) ? "bought" : "sold";
+
+    if (order->isFilled()) {
+        std::cout << "Order of user " << order->userId << " has been filled with " <<
+        order->orderedAmount << " shares of " << order->shareName << " bought at an average price of " <<
+        order->getAveragePrice() << std::endl;
+    }
+    else {
+        std::cout << "Order of user " << order->userId << " has been cancelled with " <<
+        order->orderedAmount - order->getLeftToOrder() << "/" << order->orderedAmount << " shares of " << order->shareName << " bought at an average price of " <<
+        order->getAveragePrice() << std::endl;
+    }
+
     (void)order;
 }
 
