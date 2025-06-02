@@ -11,7 +11,7 @@ int main() {
     // create an order
     exchange.createOrder("User1", exchange::OrderType::BUY, "TechCorp", "TechShare1", 9, 49);
     exchange.createOrder("User2", exchange::OrderType::BUY, "TechCorp", "TechShare2", 10, 50);
-    exchange.createOrder("User2", exchange::OrderType::BUY, "TechCorp", "TechShare3", 10, 1);
+    exchange.createOrder("User3", exchange::OrderType::BUY, "TechCorp", "TechShare3", 10, 10);
 
 
     auto totalOrders {exchange.totalOrders()};
