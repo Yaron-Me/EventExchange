@@ -25,7 +25,7 @@ add_executable(exchange ${SOURCES} ${HEADERS})
 
 # Add include directories
 target_include_directories(exchange SYSTEM PRIVATE
-        /usr/local/boost_1_88_0         # For Boost
+        ${CMAKE_CURRENT_SOURCE_DIR}/boost_1_88_0    # For Boost headers
 )
 
 target_include_directories(exchange PRIVATE
