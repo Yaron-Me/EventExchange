@@ -10,18 +10,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Define source files
 set(SOURCES
     main.cpp
-    utility/UUID.cpp
-    exchange/Order.cpp
-    exchange/OrderQueue.cpp
-    exchange/User.cpp
+    exchange.cpp
+    database.cpp
 )
 
 # Define header files (optional but good practice)
 set(HEADERS
-    utility/UUID.hpp
-    exchange/Order.hpp
-    exchange/OrderQueue.hpp
-    exchange/User.hpp
+    exchange.hpp
+    database.hpp
 )
 
 # Add the executable with all source files
