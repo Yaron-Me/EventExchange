@@ -1,4 +1,4 @@
-#include "exchange/Stock.hpp"
+#include "Stock.hpp"
 
 namespace exchange {
     Stock::Stock(const boost::uuids::uuid& _id,

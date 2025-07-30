@@ -3,8 +3,8 @@
 #include <boost/uuid.hpp>
 #include <vector>
 
-#include "exchange/Share.hpp"
-#include "exchange/Order.hpp"
+#include "Share.hpp"
+#include "Order.hpp"
 
 namespace exchange {
     class Stock {

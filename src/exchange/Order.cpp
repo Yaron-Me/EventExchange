@@ -1,5 +1,5 @@
-#include "exchange/Order.hpp"
-#include "utility/UUID.hpp"
+#include "Order.hpp"
+#include "../utility/UUID.hpp"
 
 namespace exchange {
     Order::Order(OrderQueue& _parentQueue, User& _parentUser,

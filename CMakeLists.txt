@@ -9,25 +9,25 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Define source files
 set(SOURCES
-    main.cpp
-    utility/UUID.cpp
-    exchange/Order.cpp
-    exchange/OrderQueue.cpp
-    exchange/User.cpp
-    exchange/Share.cpp
-    exchange/Stock.cpp
-    exchange/Exchange.cpp
+    src/main.cpp
+    src/utility/UUID.cpp
+    src/exchange/Order.cpp
+    src/exchange/OrderQueue.cpp
+    src/exchange/User.cpp
+    src/exchange/Share.cpp
+    src/exchange/Stock.cpp
+    src/exchange/Exchange.cpp
 )
 
 # Define header files (optional but good practice)
 set(HEADERS
-    utility/UUID.hpp
-    exchange/Order.hpp
-    exchange/OrderQueue.hpp
-    exchange/User.hpp
-    exchange/Share.hpp
-    exchange/Stock.hpp
-    exchange/Exchange.hpp
+    src/utility/UUID.hpp
+    src/exchange/Order.hpp
+    src/exchange/OrderQueue.hpp
+    src/exchange/User.hpp
+    src/exchange/Share.hpp
+    src/exchange/Stock.hpp
+    src/exchange/Exchange.hpp
 )
 
 # Add the executable with all source files
@@ -35,8 +35,8 @@ add_executable(exchange ${SOURCES} ${HEADERS})
 
 # Add include directories
 target_include_directories(exchange SYSTEM PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/boost_1_88_0    # For Boost headers
-        ${CMAKE_CURRENT_SOURCE_DIR}/Crow-1.2.1-Linux/include  # For Crow headers
+        ${CMAKE_CURRENT_SOURCE_DIR}/libs/boost_1_88_0    # For Boost headers
+        ${CMAKE_CURRENT_SOURCE_DIR}/libs/Crow-1.2.1-Linux/include  # For Crow headers
 )
 
 target_include_directories(exchange PRIVATE
@@ -48,7 +48,8 @@ target_compile_definitions(exchange PRIVATE
     CROW_USE_BOOST              # Tell Crow to use Boost.Asio instead of standalone ASIO
 )
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/SQLiteCpp-3.3.3)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/SQLiteCpp-3.3.3)
+
 
 target_link_libraries(exchange
     SQLiteCpp

@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "exchange/Stock.hpp"
+#include "Stock.hpp"
 
 namespace exchange {
     class Exchange {

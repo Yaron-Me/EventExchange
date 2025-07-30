@@ -1,12 +1,60 @@
--- Shares table
-CREATE TABLE shares (
+-- Share table
+CREATE TABLE share (
     id TEXT PRIMARY KEY,
-    name TEXT NOT NULL
+    name TEXT NOT NULL,
+    stock_id TEXT NOT NULL,
+    FOREIGN KEY (stock_id) REFERENCES stocks(id)
 );
 
 -- Stocks table
 CREATE TABLE stocks (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
-    description TEXT
+    description TEXT,
+    yes_share_id TEXT NOT NULL,
+    no_share_id TEXT NOT NULL,
+    FOREIGN KEY (yes_share_id) REFERENCES share(id),
+    FOREIGN KEY (no_share_id) REFERENCES share(id)
+);
+
+-- Users table
+CREATE TABLE users (
+    id TEXT PRIMARY KEY,
+    name TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    balance INTEGER NOT NULL
+);
+
+-- User holdings table
+CREATE TABLE user_holdings (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    share_id TEXT NOT NULL,
+    quantity INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (share_id) REFERENCES share(id)
+);
+
+-- Comments table
+CREATE TABLE comments (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    stock_id TEXT NOT NULL,
+    comment TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (stock_id) REFERENCES stocks(id)
+);
+
+-- Transaction history table
+CREATE TABLE transactions (
+    id TEXT PRIMARY KEY,
+    buyer_id TEXT NOT NULL,
+    seller_id TEXT NOT NULL,
+    share_id TEXT NOT NULL,
+    quantity INTEGER NOT NULL,
+    price INTEGER NOT NULL,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (buyer_id) REFERENCES users(id),
+    FOREIGN KEY (seller_id) REFERENCES users(id),
+    FOREIGN KEY (share_id) REFERENCES share(id)
 );

@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if ! [ -d "libs" ]; then
+    mkdir libs
+fi
+
+cd libs
+
 # check if boost directory exists
 if ! [ -d "boost_1_88_0" ]; then
     rm -f boost_1_88_0.tar.gz  # Remove any existing corrupted file
@@ -37,7 +43,7 @@ else
     echo "SQLiteCpp directory already exists."
 fi
 
-
+cd ..
 
 # create build directory if it doesn't exist
 if ! [ -d "build" ]; then

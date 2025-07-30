@@ -1,4 +1,4 @@
-#include "exchange/Exchange.hpp"
+#include "Exchange.hpp"
 
 namespace exchange {
     bool Exchange::createStock(const boost::uuids::uuid& stockId,

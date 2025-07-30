@@ -3,8 +3,8 @@
 #include <boost/uuid.hpp>
 #include <map>
 
-#include "exchange/OrderQueue.hpp"
-#include "exchange/Order.hpp"
+#include "OrderQueue.hpp"
+#include "Order.hpp"
 
 namespace exchange {
     class Share {
