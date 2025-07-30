@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Define source files
 set(SOURCES
+    src/database/database.cpp
     src/main.cpp
     src/utility/UUID.cpp
     src/exchange/Order.cpp
@@ -21,6 +22,7 @@ set(SOURCES
 
 # Define header files (optional but good practice)
 set(HEADERS
+    src/database/database.hpp
     src/utility/UUID.hpp
     src/exchange/Order.hpp
     src/exchange/OrderQueue.hpp
