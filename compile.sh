@@ -10,6 +10,35 @@ else
     echo "Boost directory already exists."
 fi
 
+if ! [ -d "Crow-1.2.1-Linux" ]; then
+    rm -f Crow-1.2.1-Linux.tar.gz  # Remove any existing corrupted file
+    wget https://github.com/CrowCpp/Crow/releases/download/v1.2.1.2/Crow-1.2.1-Linux.tar.gz
+    tar -xzf Crow-1.2.1-Linux.tar.gz
+    rm Crow-1.2.1-Linux.tar.gz
+else
+    echo "Crow directory already exists."
+fi
+
+if ! [ -d "sqlite-autoconf-3500300" ]; then
+    rm -f sqlite-autoconf-3500300.tar.gz  # Remove any existing corrupted file
+    wget https://www.sqlite.org/2025/sqlite-autoconf-3500300.tar.gz
+    tar -xzf sqlite-autoconf-3500300.tar.gz
+    rm sqlite-autoconf-3500300.tar.gz
+else
+    echo "SQLite directory already exists."
+fi
+
+if ! [ -d "SQLiteCpp-3.3.3" ]; then
+    rm -f 3.3.3.tar.gz  # Remove any existing corrupted file
+    wget https://github.com/SRombauts/SQLiteCpp/archive/refs/tags/3.3.3.tar.gz
+    tar -xzf 3.3.3.tar.gz
+    rm 3.3.3.tar.gz
+else
+    echo "SQLiteCpp directory already exists."
+fi
+
+
+
 # create build directory if it doesn't exist
 if ! [ -d "build" ]; then
     mkdir build

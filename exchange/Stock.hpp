@@ -11,11 +11,12 @@ namespace exchange {
         public:
             const boost::uuids::uuid id;
 
-            Stock(const boost::uuids::uuid _id);
-
-            bool createShare(const boost::uuids::uuid& shareId);
+            Stock(const boost::uuids::uuid& _id,
+                  const boost::uuids::uuid& _yesId,
+                  const boost::uuids::uuid& _noId);
 
         private:
-            std::vector<Share> shares;
+            Share yes;
+            Share no;
     };
 }

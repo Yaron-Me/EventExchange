@@ -36,10 +36,23 @@ add_executable(exchange ${SOURCES} ${HEADERS})
 # Add include directories
 target_include_directories(exchange SYSTEM PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/boost_1_88_0    # For Boost headers
+        ${CMAKE_CURRENT_SOURCE_DIR}/Crow-1.2.1-Linux/include  # For Crow headers
 )
 
 target_include_directories(exchange PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}     # For local headers
+)
+
+# Define preprocessor macros to use Boost with Crow
+target_compile_definitions(exchange PRIVATE
+    CROW_USE_BOOST              # Tell Crow to use Boost.Asio instead of standalone ASIO
+)
+
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/SQLiteCpp-3.3.3)
+
+target_link_libraries(exchange
+    SQLiteCpp
+    sqlite3
 )
 
 # Enhanced compiler flags for strict compilation

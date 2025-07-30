@@ -1,0 +1,12 @@
+-- Shares table
+CREATE TABLE shares (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL
+);
+
+-- Stocks table
+CREATE TABLE stocks (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    description TEXT
+);

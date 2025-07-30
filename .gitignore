@@ -1,3 +1,6 @@
 build/
 .vscode
 boost_1_88_0/
+Crow-1.2.1-Linux/
+sqlite-autoconf-3500300/
+SQLiteCpp-3.3.3/
