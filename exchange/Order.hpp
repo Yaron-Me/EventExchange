@@ -5,6 +5,12 @@
 #include <array>
 #include <boost/uuid.hpp>
 
+// Forward declarations to avoid circular dependencies
+namespace exchange {
+    class OrderQueue;
+    class User;
+}
+
 namespace exchange {
     static const std::uint16_t MAX_DENOMINATIONS = 100;
 
@@ -23,13 +29,18 @@ namespace exchange {
             const std::uint32_t quantity;
             const std::uint16_t price;
 
-            Order(const boost::uuids::uuid& _ownerId, OrderType _type,
+            Order(OrderQueue& _parentQueue, User& _parentUser,
+                  const boost::uuids::uuid& _ownerId, const OrderType _type,
                   const std::string& _stockId, const std::string& _shareId,
-                  std::uint32_t _quantity, std::uint16_t _price);
+                  const std::uint32_t _quantity, const std::uint16_t _price);
 
             ~Order();
 
         private:
-            
+            std::uint32_t filledQuantity;
+            std::uint64_t fillCosts;
+
+            OrderQueue& parentQueue;
+            User& parentUser;
     };
 }

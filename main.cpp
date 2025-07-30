@@ -3,11 +3,18 @@
 
 #include "utility/UUID.hpp"
 #include "exchange/Order.hpp"
-#include "exchange/OrderQueue.hpp"
-#include "exchange/User.hpp"
+#include "exchange/Exchange.hpp"
 
 int main() {
-    // Example usage
-    boost::uuids::uuid newUUID = utility::generateUUID();
-    std::cout << "Generated UUID: " << newUUID << std::endl;
+    exchange::Exchange exchange;
+
+    // Create a new stock
+    boost::uuids::uuid stockId = utility::generateUUID();
+    if (exchange.createStock(stockId)) {
+        std::cout << "Stock created successfully: " << stockId << std::endl;
+    } else {
+        std::cout << "Failed to create stock (already exists): " << stockId << std::endl;
+    }
+
+    return 0;
 }

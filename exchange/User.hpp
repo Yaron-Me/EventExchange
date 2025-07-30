@@ -5,7 +5,10 @@
 #include <memory>
 #include <boost/uuid.hpp>
 
-#include "exchange/Order.hpp"
+// Forward declaration to avoid circular dependencies
+namespace exchange {
+    class Order;
+}
 
 namespace exchange {
     class User {
@@ -13,6 +16,6 @@ namespace exchange {
             boost::uuids::uuid id;
 
         private:
-            std::vector<std::shared_ptr<exchange::Order>> orders;
+            std::vector<std::shared_ptr<Order>> orders;
     };
 }

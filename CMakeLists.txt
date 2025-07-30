@@ -14,6 +14,9 @@ set(SOURCES
     exchange/Order.cpp
     exchange/OrderQueue.cpp
     exchange/User.cpp
+    exchange/Share.cpp
+    exchange/Stock.cpp
+    exchange/Exchange.cpp
 )
 
 # Define header files (optional but good practice)
@@ -22,6 +25,9 @@ set(HEADERS
     exchange/Order.hpp
     exchange/OrderQueue.hpp
     exchange/User.hpp
+    exchange/Share.hpp
+    exchange/Stock.hpp
+    exchange/Exchange.hpp
 )
 
 # Add the executable with all source files

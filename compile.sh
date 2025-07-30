@@ -24,3 +24,8 @@ if make; then
 else
     echo "Build failed."
 fi
+
+# check if there is an -r flag
+if [[ "$1" == "-r" ]]; then
+    ./exchange
+fi

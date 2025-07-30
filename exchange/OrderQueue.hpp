@@ -3,13 +3,16 @@
 #include <memory>
 #include <deque>
 
-#include "exchange/Order.hpp"
+// Forward declaration to avoid circular dependencies
+namespace exchange {
+    class Order;
+}
 
 namespace exchange {
     class OrderQueue {
         public:
 
         private:
-            std::deque<std::shared_ptr<exchange::Order>> orderQueue;
+            std::deque<std::shared_ptr<Order>> orderQueue;
     };
 }
