@@ -1,5 +1,5 @@
 #include "stock_routes.hpp"
-#include <iostream>
+#include "../database/exchange.hpp"
 
 namespace routes {
     void setupStockRoutes(crow::SimpleApp& app) {
@@ -13,18 +13,18 @@ namespace routes {
             
             if (!body.has("name") || !body.has("description") || 
                 !body.has("yes_share_name") || !body.has("no_share_name")) {
-                return crow::response(400, "Missing required fields");
+                return crow::response{400, "Missing required fields"};
             }
             
-            std::string name = body["name"].s();
-            std::string description = body["description"].s();
-            std::string yesShareName = body["yes_share_name"].s();
-            std::string noShareName = body["no_share_name"].s();
+            const std::string name{body["name"].s()};
+            const std::string description{body["description"].s()};
+            const std::string yesShareName{body["yes_share_name"].s()};
+            const std::string noShareName{body["no_share_name"].s()};
             
             if (database::createStock(name, description, yesShareName, noShareName)) {
-                return crow::response(200, "Stock created successfully");
+                return crow::response{200, "Stock created successfully"};
             } else {
-                return crow::response(400, "Failed to create stock");
+                return crow::response{400, "Failed to create stock"};
             }
         });
     }

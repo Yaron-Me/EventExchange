@@ -54,7 +54,7 @@ cd build
 cmake ..
 
 # compile the project
-if make; then
+if make -j$(nproc); then
     echo "Build successful."
     # check if there is an -r flag
     if [[ "$1" == "-r" ]]; then

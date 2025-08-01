@@ -9,29 +9,40 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Define source files
 set(SOURCES
-    src/main.cpp
-    src/utility/UUID.cpp
+    src/database/exchange.cpp
+    src/database/users.cpp
+    src/database/utility.cpp
+
+    src/utility/uuid.cpp
+
     src/exchange/Order.cpp
     src/exchange/OrderQueue.cpp
     src/exchange/User.cpp
     src/exchange/Share.cpp
     src/exchange/Stock.cpp
     src/exchange/Exchange.cpp
-    src/database/database.cpp
+
     src/routes/user_routes.cpp
     src/routes/stock_routes.cpp
+
+    src/main.cpp
 )
 
 # Define header files (optional but good practice)
 set(HEADERS
-    src/database/database.hpp
-    src/utility/UUID.hpp
+    src/database/exchange.hpp
+    src/database/users.hpp
+    src/database/utility.hpp
+
+    src/utility/uuid.hpp
+
     src/exchange/Order.hpp
     src/exchange/OrderQueue.hpp
     src/exchange/User.hpp
     src/exchange/Share.hpp
     src/exchange/Stock.hpp
     src/exchange/Exchange.hpp
+
     src/routes/user_routes.hpp
     src/routes/stock_routes.hpp
 )

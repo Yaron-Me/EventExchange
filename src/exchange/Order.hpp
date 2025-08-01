@@ -34,8 +34,6 @@ namespace exchange {
                   const std::string& _stockId, const std::string& _shareId,
                   const std::uint32_t _quantity, const std::uint16_t _price);
 
-            ~Order();
-
         private:
             std::uint32_t filledQuantity;
             std::uint64_t fillCosts;
