@@ -9,7 +9,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Define source files
 set(SOURCES
-    src/database/database.cpp
     src/main.cpp
     src/utility/UUID.cpp
     src/exchange/Order.cpp
@@ -18,6 +17,9 @@ set(SOURCES
     src/exchange/Share.cpp
     src/exchange/Stock.cpp
     src/exchange/Exchange.cpp
+    src/database/database.cpp
+    src/routes/user_routes.cpp
+    src/routes/stock_routes.cpp
 )
 
 # Define header files (optional but good practice)
@@ -30,6 +32,8 @@ set(HEADERS
     src/exchange/Share.hpp
     src/exchange/Stock.hpp
     src/exchange/Exchange.hpp
+    src/routes/user_routes.hpp
+    src/routes/stock_routes.hpp
 )
 
 # Add the executable with all source files

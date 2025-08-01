@@ -56,11 +56,13 @@ cmake ..
 # compile the project
 if make; then
     echo "Build successful."
+    # check if there is an -r flag
+    if [[ "$1" == "-r" ]]; then
+        # clear terminal
+        clear
+        ./exchange
+    fi
 else
     echo "Build failed."
 fi
 
-# check if there is an -r flag
-if [[ "$1" == "-r" ]]; then
-    ./exchange
-fi

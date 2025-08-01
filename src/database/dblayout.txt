@@ -1,5 +1,5 @@
--- Share table
-CREATE TABLE share (
+-- Shares table
+CREATE TABLE shares (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
     stock_id TEXT NOT NULL,
@@ -13,8 +13,8 @@ CREATE TABLE stocks (
     description TEXT,
     yes_share_id TEXT NOT NULL,
     no_share_id TEXT NOT NULL,
-    FOREIGN KEY (yes_share_id) REFERENCES share(id),
-    FOREIGN KEY (no_share_id) REFERENCES share(id)
+    FOREIGN KEY (yes_share_id) REFERENCES shares(id),
+    FOREIGN KEY (no_share_id) REFERENCES shares(id)
 );
 
 -- Users table
@@ -27,12 +27,12 @@ CREATE TABLE users (
 
 -- User holdings table
 CREATE TABLE user_holdings (
-    id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
     share_id TEXT NOT NULL,
     quantity INTEGER NOT NULL,
+    PRIMARY KEY (user_id, share_id),
     FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (share_id) REFERENCES share(id)
+    FOREIGN KEY (share_id) REFERENCES shares(id)
 );
 
 -- Comments table
@@ -48,13 +48,12 @@ CREATE TABLE comments (
 -- Transaction history table
 CREATE TABLE transactions (
     id TEXT PRIMARY KEY,
-    buyer_id TEXT NOT NULL,
-    seller_id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
     share_id TEXT NOT NULL,
+    transaction_type TEXT NOT NULL CHECK (transaction_type IN ('BUY', 'SELL')),
     quantity INTEGER NOT NULL,
     price INTEGER NOT NULL,
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (buyer_id) REFERENCES users(id),
-    FOREIGN KEY (seller_id) REFERENCES users(id),
-    FOREIGN KEY (share_id) REFERENCES share(id)
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (share_id) REFERENCES shares(id)
 );

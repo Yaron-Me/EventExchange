@@ -4,4 +4,5 @@
 
 namespace utility {
     const boost::uuids::uuid generateUUID();
+    const std::string uuidToString(const boost::uuids::uuid& uuid);
 }
