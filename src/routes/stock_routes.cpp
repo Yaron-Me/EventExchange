@@ -1,5 +1,6 @@
 #include "stock_routes.hpp"
 #include "../database/exchange.hpp"
+#include "../utility/uuid.hpp"
 
 namespace routes {
     void setupStockRoutes(crow::SimpleApp& app) {
@@ -26,6 +27,27 @@ namespace routes {
             } else {
                 return crow::response{400, "Failed to create stock"};
             }
+        });
+
+        
+        CROW_ROUTE(app, "/stocks").methods("GET"_method)
+        ([]() {
+            auto stocks = database::getStocks();
+
+            crow::json::wvalue::list response;
+            for (const auto& stock : stocks) {
+                crow::json::wvalue stockJson;
+                stockJson["id"] = utility::uuidToString(stock.id);
+                stockJson["name"] = stock.name;
+                stockJson["description"] = stock.description;
+                stockJson["created_at"] = stock.createdAt;
+                stockJson["yes_share"] = crow::json::wvalue{{"id", utility::uuidToString(stock.yesShare.id)},
+                                                            {"name", stock.yesShare.name}};
+                stockJson["no_share"] = crow::json::wvalue{{"id", utility::uuidToString(stock.noShare.id)},
+                                                            {"name", stock.noShare.name}};
+                response.push_back(stockJson);
+            }
+            return crow::response{crow::json::wvalue{response}};
         });
     }
 }

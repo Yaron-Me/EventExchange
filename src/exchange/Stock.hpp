@@ -15,6 +15,13 @@ namespace exchange {
                   const boost::uuids::uuid& _yesId,
                   const boost::uuids::uuid& _noId);
 
+            const Share& getYesShare() const {
+                return yes;
+            }
+            const Share& getNoShare() const {
+                return no;
+            }
+
         private:
             Share yes;
             Share no;

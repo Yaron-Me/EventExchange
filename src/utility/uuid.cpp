@@ -9,4 +9,8 @@ namespace utility {
     const std::string uuidToString(const boost::uuids::uuid& uuid) {
         return boost::uuids::to_string(uuid);
     }
+
+    const boost::uuids::uuid stringToUUID(const std::string& uuidStr) {
+        return boost::uuids::string_generator()(uuidStr);
+    }
 }
