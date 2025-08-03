@@ -7,8 +7,8 @@
 #include "exchange/Order.hpp"
 #include "exchange/Exchange.hpp"
 
-#include "routes/user_routes.hpp"
-#include "routes/stock_routes.hpp"
+#include "api/api.hpp"
+#include "routes/routes.hpp"
 
 #include "database/utility.hpp"
 
@@ -19,12 +19,14 @@ int main() {
     }
 
     crow::SimpleApp app;
+    crow::mustache::set_global_base("/home/soul/EventExchange/src/templates");
     // exchange::Exchange exchange;
 
     // Setup all routes
-    routes::setupUserRoutes(app);
-    routes::setupStockRoutes(app);
+    api::setupApi(app);
+    routes::setupRoutes(app);
 
+    // Start the application
     app.port(18080).run();
 
     return 0;

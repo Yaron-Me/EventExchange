@@ -1,11 +1,11 @@
-#include "stock_routes.hpp"
+#include "stock.hpp"
 #include "../database/exchange.hpp"
 #include "../utility/uuid.hpp"
 
-namespace routes {
-    void setupStockRoutes(crow::SimpleApp& app) {
+namespace api {
+    void setupStockApi(crow::SimpleApp& app) {
         // Create stock route
-        CROW_ROUTE(app, "/stocks").methods("POST"_method)
+        CROW_ROUTE(app, "/api/stocks").methods("POST"_method)
         ([](const crow::request& req) {
             auto body = crow::json::load(req.body);
             if (!body) {
@@ -30,7 +30,7 @@ namespace routes {
         });
 
         
-        CROW_ROUTE(app, "/stocks").methods("GET"_method)
+        CROW_ROUTE(app, "/api/stocks").methods("GET"_method)
         ([]() {
             auto stocks = database::getStocks();
 

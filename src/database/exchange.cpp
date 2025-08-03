@@ -100,8 +100,7 @@ namespace database {
         for (const auto& [id, stock] : stocksMap) {
             results.push_back(stock);
         }
-        
+
         return results;
     }
-
 }

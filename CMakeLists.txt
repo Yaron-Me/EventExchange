@@ -22,8 +22,10 @@ set(SOURCES
     src/exchange/Stock.cpp
     src/exchange/Exchange.cpp
 
-    src/routes/user_routes.cpp
-    src/routes/stock_routes.cpp
+    src/api/user.cpp
+    src/api/stock.cpp
+
+    src/routes/home.cpp
 
     src/main.cpp
 )
@@ -43,8 +45,12 @@ set(HEADERS
     src/exchange/Stock.hpp
     src/exchange/Exchange.hpp
 
-    src/routes/user_routes.hpp
-    src/routes/stock_routes.hpp
+    src/api/api.hpp
+    src/api/user.hpp
+    src/api/stock.hpp
+
+    src/routes/routes.hpp
+    src/routes/home.hpp
 )
 
 # Add the executable with all source files
@@ -62,7 +68,8 @@ target_include_directories(exchange PRIVATE
 
 # Define preprocessor macros to use Boost with Crow
 target_compile_definitions(exchange PRIVATE
-    CROW_USE_BOOST              # Tell Crow to use Boost.Asio instead of standalone ASIO
+    CROW_USE_BOOST=1
+    CROW_STATIC_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/src/static"
 )
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/SQLiteCpp-3.3.3)

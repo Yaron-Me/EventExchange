@@ -1,11 +1,11 @@
 #include <iostream>
 
-#include "user_routes.hpp"
+#include "user.hpp"
 #include "../database/users.hpp"
 
-namespace routes {
-    void setupUserRoutes(crow::SimpleApp& app) {
-        CROW_ROUTE(app, "/register").methods("POST"_method)
+namespace api {
+    void setupUserApi(crow::SimpleApp& app) {
+        CROW_ROUTE(app, "/api/register").methods("POST"_method)
         ([](const crow::request& req) {
             auto body = crow::json::load(req.body);
             if (!body) {
