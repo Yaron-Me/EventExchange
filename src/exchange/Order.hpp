@@ -3,7 +3,9 @@
 #include <cstdint>
 #include <string>
 #include <array>
-#include <boost/uuid.hpp>
+#include <ostream>
+
+#include "../utility/uuid.hpp"
 
 // Forward declarations to avoid circular dependencies
 namespace exchange {
@@ -18,6 +20,10 @@ namespace exchange {
         BUY,
         SELL
     };
+
+    OrderType stringToOrderType(const std::string& typeStr);
+
+    std::ostream& operator<<(std::ostream& os, const OrderType& type);
 
     class Order {
         public:

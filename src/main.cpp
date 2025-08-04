@@ -20,10 +20,10 @@ int main() {
 
     crow::SimpleApp app;
     crow::mustache::set_global_base("/home/soul/EventExchange/src/templates");
-    // exchange::Exchange exchange;
+    exchange::Exchange exchange;
 
     // Setup all routes
-    api::setupApi(app);
+    api::setupApi(app, exchange);
     routes::setupRoutes(app);
 
     // Start the application

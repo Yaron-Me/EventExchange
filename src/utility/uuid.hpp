@@ -1,6 +1,8 @@
 #pragma once
 
 #include <boost/uuid.hpp>
+#include <string>
+#include "../exchange/Order.hpp"
 
 namespace utility {
     const boost::uuids::uuid generateUUID();

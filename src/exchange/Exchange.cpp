@@ -14,4 +14,20 @@ namespace exchange {
         stocks.emplace_back(stockId, yesId, noId);
         return true; // Stock created successfully
     }
+
+    crow::response Exchange::createOrder(const boost::uuids::uuid& userId,
+                               const boost::uuids::uuid& stockId,
+                               const boost::uuids::uuid& shareId,
+                               OrderType type, std::uint32_t quantity, std::uint16_t price) {
+
+        std::cout << "Creating order for user: " << utility::uuidToString(userId)
+                  << ", stock: " << utility::uuidToString(stockId)
+                  << ", share: " << utility::uuidToString(shareId)
+                  << ", type: " << static_cast<int>(type)
+                  << ", quantity: " << quantity
+                  << ", price: " << price
+                  << "\n";
+
+        return crow::response{400, "Order creation not implemented"};
+    }
 }

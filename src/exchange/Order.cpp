@@ -13,4 +13,28 @@ namespace exchange {
     {
         assert(_price <= MAX_DENOMINATIONS);
     }
+
+    OrderType stringToOrderType(const std::string& typeStr) {
+        if (typeStr == "BUY") {
+            return exchange::OrderType::BUY;
+        }
+        else if (typeStr == "SELL") {
+            return exchange::OrderType::SELL;
+        }
+        else {
+            throw std::invalid_argument("Invalid order type: " + typeStr);
+        }
+    }
+
+    std::ostream& operator<<(std::ostream& os, const OrderType& type) {
+        switch (type) {
+            case OrderType::BUY:
+                os << "BUY";
+                break;
+            case OrderType::SELL:
+                os << "SELL";
+                break;
+        }
+        return os; // Return the stream to allow chaining (e.g., std::cout << type << '\n';)
+    }
 }

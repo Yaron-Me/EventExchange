@@ -1,3 +1,5 @@
+#pragma once
+
 #include <crow.h>
 #include "home.hpp"
 

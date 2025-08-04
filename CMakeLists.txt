@@ -24,6 +24,7 @@ set(SOURCES
 
     src/api/user.cpp
     src/api/stock.cpp
+    src/api/order.cpp
 
     src/routes/home.cpp
 
@@ -48,6 +49,7 @@ set(HEADERS
     src/api/api.hpp
     src/api/user.hpp
     src/api/stock.hpp
+    src/api/order.hpp
 
     src/routes/routes.hpp
     src/routes/home.hpp
