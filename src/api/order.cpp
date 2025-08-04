@@ -14,14 +14,14 @@ namespace api {
             }
 
             if (!body.has("user_id") || !body.has("type") ||
-                !body.has("stock_id") || !body.has("share_id") ||
+                !body.has("event_id") || !body.has("share_id") ||
                 !body.has("quantity") || !body.has("price")) {
                 return crow::response{400, "Missing required fields"};
             }
 
             try {
                 const auto userId{utility::stringToUUID(body["user_id"].s())};
-                const auto stockId{utility::stringToUUID(body["stock_id"].s())};
+                const auto eventId{utility::stringToUUID(body["event_id"].s())};
                 const auto shareId{utility::stringToUUID(body["share_id"].s())};
                 const auto type{exchange::stringToOrderType(body["type"].s())};
 
@@ -42,7 +42,7 @@ namespace api {
                 const std::uint32_t quantity{static_cast<std::uint32_t>(body["quantity"].u())};
                 const std::uint16_t price{static_cast<std::uint16_t>(body["price"].u())};
 
-                return exchange.createOrder(userId, stockId, shareId, type, quantity, price);
+                return exchange.createOrder(userId, eventId, shareId, type, quantity, price);
             }
             catch (const std::exception& e) {
                 return crow::response{400, "Invalid UUID or order type"};

@@ -1,4 +1,4 @@
-CREATE TABLE stocks (
+CREATE TABLE events (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
     description TEXT,
@@ -9,9 +9,9 @@ CREATE TABLE stocks (
 CREATE TABLE shares (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
-    stock_id TEXT NOT NULL,
+    event_id TEXT NOT NULL,
     type TEXT NOT NULL CHECK (type IN ('YES', 'NO')),
-    FOREIGN KEY (stock_id) REFERENCES stocks(id) ON DELETE CASCADE
+    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
 );
 
 CREATE TABLE users (
@@ -34,10 +34,10 @@ CREATE TABLE user_holdings (
 CREATE TABLE comments (
     id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
-    stock_id TEXT NOT NULL,
+    event_id TEXT NOT NULL,
     comment TEXT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (stock_id) REFERENCES stocks(id) ON DELETE CASCADE
+    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
 );
 
 CREATE TABLE transactions (
@@ -52,10 +52,10 @@ CREATE TABLE transactions (
     FOREIGN KEY (share_id) REFERENCES shares(id) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_shares_stock_id ON shares(stock_id);
+CREATE INDEX idx_shares_event_id ON shares(event_id);
 CREATE INDEX idx_user_holdings_user_id ON user_holdings(user_id);
 CREATE INDEX idx_user_holdings_share_id ON user_holdings(share_id);
 CREATE INDEX idx_comments_user_id ON comments(user_id);
-CREATE INDEX idx_comments_stock_id ON comments(stock_id);
+CREATE INDEX idx_comments_event_id ON comments(event_id);
 CREATE INDEX idx_transactions_user_id ON transactions(user_id);
 CREATE INDEX idx_transactions_share_id ON transactions(share_id);

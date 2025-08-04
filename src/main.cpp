@@ -5,7 +5,7 @@
 #include "utility/uuid.hpp"
 
 #include "exchange/Order.hpp"
-#include "exchange/Stock.hpp"
+#include "exchange/Event.hpp"
 #include "exchange/Exchange.hpp"
 
 #include "api/api.hpp"
@@ -21,11 +21,11 @@ int main() {
     if (!std::filesystem::exists("exchange.db3")) {
         database::initializeDatabase("../src/database/dblayout.sql");
 
-        database::createStock(exchange, "Will I finish this project?",
-                              "A stock to test the API", "Yes", "No");
-        database::createStock(exchange, "Who will win the fight?",
-                              "A stock to test the API", "Fighter A", "Fighter B");
-        database::createStock(exchange, "Example Stock", "This is an example stock",
+        database::createEvent(exchange, "Will I finish this project?",
+                              "An event to test the API", "Yes", "No");
+        database::createEvent(exchange, "Who will win the fight?",
+                              "An event to test the API", "Fighter A", "Fighter B");
+        database::createEvent(exchange, "Example Event", "This is an example event",
                            "Yes Share", "No Share");
 
         database::registerUser("testuser", "password123");

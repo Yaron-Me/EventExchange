@@ -1,0 +1,53 @@
+#include "event.hpp"
+#include "../database/exchange.hpp"
+#include "../utility/uuid.hpp"
+
+namespace api {
+    void setupEventApi(crow::SimpleApp& app, exchange::Exchange& exchange) {
+        // Create event route
+        CROW_ROUTE(app, "/api/events").methods("POST"_method)
+        ([&exchange](const crow::request& req) {
+            auto body = crow::json::load(req.body);
+            if (!body) {
+                return crow::response(400, "Invalid JSON");
+            }
+            
+            if (!body.has("name") || !body.has("description") || 
+                !body.has("yes_share_name") || !body.has("no_share_name")) {
+                return crow::response{400, "Missing required fields"};
+            }
+            
+            const std::string name{body["name"].s()};
+            const std::string description{body["description"].s()};
+            const std::string yesShareName{body["yes_share_name"].s()};
+            const std::string noShareName{body["no_share_name"].s()};
+            
+            if (database::createEvent(exchange, name, description, yesShareName, noShareName)) {
+                return crow::response{200, "Event created successfully"};
+            } else {
+                return crow::response{400, "Failed to create event"};
+            }
+        });
+
+        
+        CROW_ROUTE(app, "/api/events").methods("GET"_method)
+        ([]() {
+            auto events = database::getEvents();
+
+            crow::json::wvalue::list response;
+            for (const auto& event : events) {
+                crow::json::wvalue eventJson;
+                eventJson["id"] = utility::uuidToString(event.id);
+                eventJson["name"] = event.name;
+                eventJson["description"] = event.description;
+                eventJson["created_at"] = event.createdAt;
+                eventJson["yes_share"] = crow::json::wvalue{{"id", utility::uuidToString(event.yesShare.id)},
+                                                            {"name", event.yesShare.name}};
+                eventJson["no_share"] = crow::json::wvalue{{"id", utility::uuidToString(event.noShare.id)},
+                                                            {"name", event.noShare.name}};
+                response.push_back(eventJson);
+            }
+            return crow::response{crow::json::wvalue{response}};
+        });
+    }
+}

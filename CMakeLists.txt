@@ -19,11 +19,11 @@ set(SOURCES
     src/exchange/OrderQueue.cpp
     src/exchange/User.cpp
     src/exchange/Share.cpp
-    src/exchange/Stock.cpp
+    src/exchange/Event.cpp
     src/exchange/Exchange.cpp
 
     src/api/user.cpp
-    src/api/stock.cpp
+    src/api/event.cpp
     src/api/order.cpp
 
     src/routes/home.cpp
@@ -43,12 +43,12 @@ set(HEADERS
     src/exchange/OrderQueue.hpp
     src/exchange/User.hpp
     src/exchange/Share.hpp
-    src/exchange/Stock.hpp
+    src/exchange/Event.hpp
     src/exchange/Exchange.hpp
 
     src/api/api.hpp
     src/api/user.hpp
-    src/api/stock.hpp
+    src/api/event.hpp
     src/api/order.hpp
 
     src/routes/routes.hpp

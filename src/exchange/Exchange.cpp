@@ -2,27 +2,27 @@
 #include "../database/exchange.hpp"
 
 namespace exchange {
-    bool Exchange::createStock(const boost::uuids::uuid& stockId,
+    bool Exchange::createEvent(const boost::uuids::uuid& eventId,
                                const boost::uuids::uuid& yesId,
                                const boost::uuids::uuid& noId) {
-        // Check if the stock already exists
-        for (const auto& stock : stocks) {
-            if (stock.id == stockId) {
-                return false; // Stock already exists
+        // Check if the event already exists
+        for (const auto& event : events) {
+            if (event.id == eventId) {
+                return false; // Event already exists
             }
         }
-        // Create a new stock and add it to the exchange
-        stocks.emplace_back(stockId, yesId, noId);
-        return true; // Stock created successfully
+        // Create a new event and add it to the exchange
+        events.emplace_back(eventId, yesId, noId);
+        return true; // Event created successfully
     }
 
     crow::response Exchange::createOrder(const boost::uuids::uuid& userId,
-                               const boost::uuids::uuid& stockId,
+                               const boost::uuids::uuid& eventId,
                                const boost::uuids::uuid& shareId,
                                OrderType type, std::uint32_t quantity, std::uint16_t price) {
 
         std::cout << "Creating order for user: " << utility::uuidToString(userId)
-                  << ", stock: " << utility::uuidToString(stockId)
+                  << ", event: " << utility::uuidToString(eventId)
                   << ", share: " << utility::uuidToString(shareId)
                   << ", type: " << static_cast<int>(type)
                   << ", quantity: " << quantity
@@ -33,9 +33,9 @@ namespace exchange {
     }
 
     Exchange::Exchange() {
-        for (const auto& data : database::getStocks()) {
-            Stock stock{data.id, data.yesShare.id, data.noShare.id};
-            stocks.push_back(stock);
+        for (const auto& data : database::getEvents()) {
+            Event event{data.id, data.yesShare.id, data.noShare.id};
+            events.push_back(event);
         }
     }
 }

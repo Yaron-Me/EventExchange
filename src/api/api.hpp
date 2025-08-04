@@ -2,13 +2,13 @@
 
 #include <crow.h>
 #include "user.hpp"
-#include "stock.hpp"
+#include "event.hpp"
 #include "order.hpp"
 
 namespace api {
     void setupApi(crow::SimpleApp& app, exchange::Exchange& exchange) {
         setupUserApi(app);
-        setupStockApi(app, exchange);
+        setupEventApi(app, exchange);
         setupOrderApi(app, exchange);
     }
 }

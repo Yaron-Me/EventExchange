@@ -7,11 +7,11 @@
 #include "Order.hpp"
 
 namespace exchange {
-    class Stock {
+    class Event {
         public:
             const boost::uuids::uuid id;
 
-            Stock(const boost::uuids::uuid& _id,
+            Event(const boost::uuids::uuid& _id,
                   const boost::uuids::uuid& _yesId,
                   const boost::uuids::uuid& _noId);
 

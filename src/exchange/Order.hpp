@@ -30,14 +30,14 @@ namespace exchange {
             const boost::uuids::uuid id;
             const boost::uuids::uuid ownerId;
             const OrderType type;
-            const std::string stockId;
+            const std::string eventId;
             const std::string shareId;
             const std::uint32_t quantity;
             const std::uint16_t price;
 
             Order(OrderQueue& _parentQueue, User& _parentUser,
                   const boost::uuids::uuid& _ownerId, const OrderType _type,
-                  const std::string& _stockId, const std::string& _shareId,
+                  const std::string& _eventId, const std::string& _shareId,
                   const std::uint32_t _quantity, const std::uint16_t _price);
 
         private:

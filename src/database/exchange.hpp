@@ -12,7 +12,7 @@ namespace database {
         std::string name;
     };
 
-    struct StockData {
+    struct EventData {
         boost::uuids::uuid id;
         std::string name;
         std::string description;
@@ -21,8 +21,8 @@ namespace database {
         ShareData noShare;
     };
 
-    bool createStock(exchange::Exchange& exchange, const std::string& stockName,
-                     const std::string& stockDescription, const std::string& yesShareName,
+    bool createEvent(exchange::Exchange& exchange, const std::string& eventName,
+                     const std::string& eventDescription, const std::string& yesShareName,
                      const std::string& noShareName);
-    const std::vector<StockData> getStocks();
+    const std::vector<EventData> getEvents();
 }
