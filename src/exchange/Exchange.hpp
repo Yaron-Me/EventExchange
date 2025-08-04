@@ -21,6 +21,8 @@ namespace exchange {
                 return stocks;
             }
 
+            Exchange();
+
         private:
             std::vector<Stock> stocks;
     };

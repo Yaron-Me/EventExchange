@@ -4,5 +4,5 @@
 #include "../exchange/Exchange.hpp"
 
 namespace api {
-    void setupStockApi(crow::SimpleApp& app);
+    void setupStockApi(crow::SimpleApp& app, exchange::Exchange& exchange);
 }

@@ -8,7 +8,7 @@
 namespace api {
     void setupApi(crow::SimpleApp& app, exchange::Exchange& exchange) {
         setupUserApi(app);
-        setupStockApi(app);
+        setupStockApi(app, exchange);
         setupOrderApi(app, exchange);
     }
 }

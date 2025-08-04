@@ -3,11 +3,13 @@
 #include <map>
 
 #include "../utility/uuid.hpp"
+
 #include "exchange.hpp"
 
 namespace database {
-    bool createStock(const std::string& stockName, const std::string& stockDescription,
-                     const std::string& yesShareName, const std::string& noShareName) {
+    bool createStock(exchange::Exchange& exchange, const std::string& stockName,
+                     const std::string& stockDescription, const std::string& yesShareName,
+                     const std::string& noShareName) {
         const auto stockId{utility::generateUUID()};
         const auto yesShareId{utility::generateUUID()};
         const auto noShareId{utility::generateUUID()};
@@ -38,8 +40,10 @@ namespace database {
             noShareQuery.bind(2, noShareName);
             noShareQuery.bind(3, stockIdStr);
             noShareQuery.exec();
-            
+
             transaction.commit();
+
+            exchange.createStock(stockId, yesShareId, noShareId);
             
             return true;
             

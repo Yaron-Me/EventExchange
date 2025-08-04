@@ -1,4 +1,5 @@
 #include "Exchange.hpp"
+#include "../database/exchange.hpp"
 
 namespace exchange {
     bool Exchange::createStock(const boost::uuids::uuid& stockId,
@@ -29,5 +30,12 @@ namespace exchange {
                   << "\n";
 
         return crow::response{400, "Order creation not implemented"};
+    }
+
+    Exchange::Exchange() {
+        for (const auto& data : database::getStocks()) {
+            Stock stock{data.id, data.yesShare.id, data.noShare.id};
+            stocks.push_back(stock);
+        }
     }
 }

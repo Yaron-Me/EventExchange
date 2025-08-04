@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "../exchange/Exchange.hpp"
 #include "../utility/uuid.hpp"
 
 namespace database {
@@ -20,7 +21,8 @@ namespace database {
         ShareData noShare;
     };
 
-    bool createStock(const std::string& stockName, const std::string& stockDescription,
-                     const std::string& yesShareName, const std::string& noShareName);
+    bool createStock(exchange::Exchange& exchange, const std::string& stockName,
+                     const std::string& stockDescription, const std::string& yesShareName,
+                     const std::string& noShareName);
     const std::vector<StockData> getStocks();
 }

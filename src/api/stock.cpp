@@ -3,10 +3,10 @@
 #include "../utility/uuid.hpp"
 
 namespace api {
-    void setupStockApi(crow::SimpleApp& app) {
+    void setupStockApi(crow::SimpleApp& app, exchange::Exchange& exchange) {
         // Create stock route
         CROW_ROUTE(app, "/api/stocks").methods("POST"_method)
-        ([](const crow::request& req) {
+        ([&exchange](const crow::request& req) {
             auto body = crow::json::load(req.body);
             if (!body) {
                 return crow::response(400, "Invalid JSON");
@@ -22,7 +22,7 @@ namespace api {
             const std::string yesShareName{body["yes_share_name"].s()};
             const std::string noShareName{body["no_share_name"].s()};
             
-            if (database::createStock(name, description, yesShareName, noShareName)) {
+            if (database::createStock(exchange, name, description, yesShareName, noShareName)) {
                 return crow::response{200, "Stock created successfully"};
             } else {
                 return crow::response{400, "Failed to create stock"};

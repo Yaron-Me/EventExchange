@@ -25,8 +25,25 @@ namespace database {
             }
         }
         catch (const std::exception& e) {
-            std::cerr << "Error registering user: " << e.what() << std::endl;
+            std::cerr << "Error registering user: " << e.what() << "\n";
             return false;
         }
+    }
+
+    std::int64_t getUserBalance(const std::string& userId) {
+        try {
+            SQLite::Database db{"exchange.db3", SQLite::OPEN_READONLY};
+
+            SQLite::Statement query{db, "SELECT balance FROM users WHERE id = ?"};
+            query.bind(1, userId);
+
+            if (query.executeStep()) {
+                return query.getColumn(0).getInt64();
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "Error fetching user balance: " << e.what() << "\n";
+        }
+
+        return 0;
     }
 }
