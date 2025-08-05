@@ -15,13 +15,9 @@ namespace exchange {
         public:
             boost::uuids::uuid id;
 
-            std::int64_t getPositionsValue() const {
-                std::int64_t totalValue = 0;
-                for (const auto& order : orders) {
-                    totalValue += order->positionValue();
-                }
-                return totalValue;
-            }
+            std::int64_t getTiedUpBalance() const;
+
+            std::map<boost::uuids::uuid, std::uint32_t> getSellOrderShareCounts() const;
 
         private:
             std::vector<std::shared_ptr<Order>> orders;

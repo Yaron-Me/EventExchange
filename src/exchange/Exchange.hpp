@@ -16,7 +16,8 @@ namespace exchange {
             crow::response createOrder(const boost::uuids::uuid& userId,
                              const boost::uuids::uuid& eventId,
                              const boost::uuids::uuid& shareId,
-                             OrderType type, std::uint32_t quantity, std::uint16_t price);
+                             const OrderType type, const std::uint32_t quantity,
+                             const std::uint16_t price);
 
             User& getUser(const boost::uuids::uuid& userId) {
                 return users[userId];
