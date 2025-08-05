@@ -15,6 +15,14 @@ namespace exchange {
         public:
             boost::uuids::uuid id;
 
+            std::int64_t getPositionsValue() const {
+                std::int64_t totalValue = 0;
+                for (const auto& order : orders) {
+                    totalValue += order->positionValue();
+                }
+                return totalValue;
+            }
+
         private:
             std::vector<std::shared_ptr<Order>> orders;
     };

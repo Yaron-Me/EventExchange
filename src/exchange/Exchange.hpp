@@ -4,6 +4,7 @@
 #include <crow.h>
 
 #include "Event.hpp"
+#include "User.hpp"
 
 namespace exchange {
     class Exchange {
@@ -17,13 +18,14 @@ namespace exchange {
                              const boost::uuids::uuid& shareId,
                              OrderType type, std::uint32_t quantity, std::uint16_t price);
 
-            const std::vector<Event>& getEvents() const {
-                return events;
+            User& getUser(const boost::uuids::uuid& userId) {
+                return users[userId];
             }
 
             Exchange();
 
         private:
-            std::vector<Event> events;
+            std::map<boost::uuids::uuid, Event> events;
+            std::map<boost::uuids::uuid, User> users;
     };
 }

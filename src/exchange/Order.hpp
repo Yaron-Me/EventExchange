@@ -40,6 +40,14 @@ namespace exchange {
                   const std::string& _eventId, const std::string& _shareId,
                   const std::uint32_t _quantity, const std::uint16_t _price);
 
+            std::uint64_t leftOverQuantity() const {
+                return quantity - filledQuantity;
+            }
+
+            std::uint64_t positionValue() const {
+                return leftOverQuantity() * price;
+            }
+
         private:
             std::uint32_t filledQuantity;
             std::uint64_t fillCosts;

@@ -22,6 +22,18 @@ namespace exchange {
                 return no;
             }
 
+            Share& getShareById(const boost::uuids::uuid& shareId) {
+                if (shareId == yes.id) {
+                    return yes;
+                }
+                else if (shareId == no.id) {
+                    return no;
+                }
+                else {
+                    throw std::invalid_argument("Invalid share ID");
+                }
+            }
+
         private:
             Share yes;
             Share no;

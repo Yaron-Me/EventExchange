@@ -45,6 +45,7 @@ namespace api {
                 return exchange.createOrder(userId, eventId, shareId, type, quantity, price);
             }
             catch (const std::exception& e) {
+                std::cerr << "Error creating order: " << e.what() << '\n';
                 return crow::response{400, "Invalid UUID or order type"};
             }
 

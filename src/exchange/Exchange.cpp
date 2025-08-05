@@ -1,18 +1,17 @@
 #include "Exchange.hpp"
 #include "../database/exchange.hpp"
+#include "../database/users.hpp"
 
 namespace exchange {
     bool Exchange::createEvent(const boost::uuids::uuid& eventId,
                                const boost::uuids::uuid& yesId,
                                const boost::uuids::uuid& noId) {
-        // Check if the event already exists
-        for (const auto& event : events) {
-            if (event.id == eventId) {
-                return false; // Event already exists
-            }
+        
+        if (events.find(eventId) != events.end()) {
+            return false; // Event already exists
         }
-        // Create a new event and add it to the exchange
-        events.emplace_back(eventId, yesId, noId);
+
+        events.emplace(eventId, Event{eventId, yesId, noId});
         return true; // Event created successfully
     }
 
@@ -24,18 +23,37 @@ namespace exchange {
         std::cout << "Creating order for user: " << utility::uuidToString(userId)
                   << ", event: " << utility::uuidToString(eventId)
                   << ", share: " << utility::uuidToString(shareId)
-                  << ", type: " << static_cast<int>(type)
+                  << ", type: " << type
                   << ", quantity: " << quantity
                   << ", price: " << price
                   << "\n";
 
-        return crow::response{400, "Order creation not implemented"};
+        auto& user = getUser(userId);
+        auto userBalance = database::getUserBalance(userId);
+        auto positionsValue = user.getPositionsValue();
+        auto positionValue = quantity * price;
+        auto userHoldings = database::getUserHoldings(userId);
+
+        if (type == OrderType::BUY) {
+            // Check if user has enough balance
+            if (userBalance - positionsValue < positionValue) {
+                return crow::response{400, "Insufficient balance for order"};
+            }
+        }
+        else if (type == OrderType::SELL) {
+            // Check if user has enough shares to sell
+            auto holdingsIt = userHoldings.find(shareId);
+            if (holdingsIt == userHoldings.end() || holdingsIt->second < quantity) {
+                return crow::response{400, "Insufficient shares to sell"};
+            }
+        }
+
+        return crow::response{201, "Order created successfully"};
     }
 
     Exchange::Exchange() {
         for (const auto& data : database::getEvents()) {
-            Event event{data.id, data.yesShare.id, data.noShare.id};
-            events.push_back(event);
+            events.emplace(data.id, Event{data.id, data.yesShare.id, data.noShare.id});
         }
     }
 }
