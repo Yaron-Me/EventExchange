@@ -35,7 +35,7 @@ namespace exchange {
             const std::uint32_t quantity;
             const std::uint16_t price;
 
-            Order(OrderQueue& _parentQueue, User& _parentUser,
+            Order(User& _parentUser,
                   const boost::uuids::uuid& _ownerId, const OrderType _type,
                   const boost::uuids::uuid& _eventId, const boost::uuids::uuid& _shareId,
                   const std::uint32_t _quantity, const std::uint16_t _price);
@@ -52,7 +52,6 @@ namespace exchange {
             std::uint32_t filledQuantity;
             std::uint64_t fillCosts;
 
-            OrderQueue& parentQueue;
             User& parentUser;
     };
 }

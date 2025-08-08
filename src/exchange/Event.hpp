@@ -15,27 +15,13 @@ namespace exchange {
                   const boost::uuids::uuid& _yesId,
                   const boost::uuids::uuid& _noId);
 
-            const Share& getYesShare() const {
-                return yes;
-            }
-            const Share& getNoShare() const {
-                return no;
-            }
-
-            Share& getShareById(const boost::uuids::uuid& shareId) {
-                if (shareId == yes.id) {
-                    return yes;
-                }
-                else if (shareId == no.id) {
-                    return no;
-                }
-                else {
-                    throw std::invalid_argument("Invalid share ID");
-                }
-            }
+            void addOrder(std::shared_ptr<Order> order);
 
         private:
             Share yes;
             Share no;
+
+            void Event::addBuyOrder(std::shared_ptr<Order> order);
+            void Event::addSellOrder(std::shared_ptr<Order> order);
     };
 }

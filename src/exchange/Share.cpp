@@ -1,9 +1,12 @@
 #include <boost/uuid.hpp>
+#include <iostream>
 
 #include "Share.hpp"
 
 namespace exchange {
-    Share::Share(const boost::uuids::uuid& _id) : id{_id} {
-        // Constructor implementation
+    Share::Share(const boost::uuids::uuid& _id) : id{_id} {}
+
+    void Share::addOrder(std::shared_ptr<Order> order) {
+        std::cout << "Adding order to share: " << order->id << std::endl;
     }
 }

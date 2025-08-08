@@ -28,5 +28,9 @@ namespace exchange {
         private:
             std::map<boost::uuids::uuid, Event> events;
             std::map<boost::uuids::uuid, User> users;
+
+            void cleanUpUser(const boost::uuids::uuid& userId);
+
+            bool addOrder(std::shared_ptr<Order> order);
     };
 }

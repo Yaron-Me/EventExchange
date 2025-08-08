@@ -21,4 +21,12 @@ namespace exchange {
         }
         return shares;
     }
+
+    std::size_t User::getOrderCount() const {
+        return orders.size();
+    }
+
+    void User::addOrder(std::shared_ptr<Order> order) {
+        orders.push_back(order);
+    }
 }

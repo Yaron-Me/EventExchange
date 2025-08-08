@@ -8,11 +8,11 @@ namespace exchange {
                                const boost::uuids::uuid& noId) {
         
         if (events.find(eventId) != events.end()) {
-            return false; // Event already exists
+            return false;
         }
 
         events.emplace(eventId, Event{eventId, yesId, noId});
-        return true; // Event created successfully
+        return true;
     }
 
     crow::response Exchange::createOrder(const boost::uuids::uuid& userId,
@@ -20,15 +20,6 @@ namespace exchange {
                                          const boost::uuids::uuid& shareId,
                                          const OrderType type, const std::uint32_t quantity,
                                          const std::uint16_t price) {
-
-        std::cout << "Creating order for user: " << utility::uuidToString(userId)
-                  << ", event: " << utility::uuidToString(eventId)
-                  << ", share: " << utility::uuidToString(shareId)
-                  << ", type: " << type
-                  << ", quantity: " << quantity
-                  << ", price: " << price
-                  << "\n";
-
         auto& user = getUser(userId);
         
         if (type == OrderType::BUY) {
@@ -36,6 +27,7 @@ namespace exchange {
             const auto tiedUpBalance = user.getTiedUpBalance();
             const auto positionValue = quantity * price;
             if (userBalance - tiedUpBalance < positionValue) {
+                cleanUpUser(userId);
                 return crow::response{400, "Insufficient balance for order"};
             }
         }
@@ -47,16 +39,44 @@ namespace exchange {
             const auto sellShareCountIt = SellOrderShareCounts.find(shareId);
             const auto sellShareCount = (sellShareCountIt != SellOrderShareCounts.end()) ? sellShareCountIt->second : 0;
             if (ownedShares - sellShareCount < quantity) {
+                cleanUpUser(userId);
                 return crow::response{400, "Insufficient shares for order"};
             }
         }
 
+        auto order = std::make_shared<Order>(user, userId, type, eventId, shareId, quantity, price);
+        if (addOrder(order)) {
+            user.addOrder(order);
+        }
+        else {
+            cleanUpUser(userId);
+            return crow::response{400, "Order could not be added"};
+        }
+        
         return crow::response{201, "Order created successfully"};
     }
 
     Exchange::Exchange() {
         for (const auto& data : database::getEvents()) {
             events.emplace(data.id, Event{data.id, data.yesShare.id, data.noShare.id});
+        }
+    }
+
+    void Exchange::cleanUpUser(const boost::uuids::uuid& userId) {
+        if (getUser(userId).getOrderCount() == 0) {
+            users.erase(userId);
+        }
+    }
+
+    bool Exchange::addOrder(std::shared_ptr<Order> order) {
+        try {
+            auto& event = events.at(order->eventId);
+            event.addOrder(order);
+            return true;
+        }
+        catch (const std::exception& e) {
+            std::cerr << "Error adding order. This should never happen: " << e.what() << '\n';
+            return false;
         }
     }
 }

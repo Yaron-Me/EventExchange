@@ -3,6 +3,7 @@
 #include "order.hpp"
 #include "../exchange/Exchange.hpp"
 #include "../utility/uuid.hpp"
+#include "../exchange/Order.hpp"
 
 namespace api {
     void setupOrderApi(crow::SimpleApp& app, exchange::Exchange& exchange) {
@@ -34,7 +35,7 @@ namespace api {
 
                 if (body["quantity"].u() > std::numeric_limits<std::uint32_t>::max() ||
                     body["quantity"].u() <= 0 ||
-                    body["price"].u() > std::numeric_limits<std::uint16_t>::max() ||
+                    body["price"].u() > exchange::MAX_DENOMINATIONS ||
                     body["price"].u() <= 0) {
                     return crow::response{400, "Quantity or price exceeds limits"};
                 }
