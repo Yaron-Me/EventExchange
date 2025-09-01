@@ -1,3 +1,6 @@
+#include <print>
+#include <iostream>
+
 #include "Exchange.hpp"
 #include "../database/exchange.hpp"
 #include "../database/users.hpp"
@@ -75,7 +78,7 @@ namespace exchange {
             return true;
         }
         catch (const std::exception& e) {
-            std::cerr << "Error adding order. This should never happen: " << e.what() << '\n';
+            std::print(std::cerr, "Error adding order. This should never happen: {}\n", e.what());
             return false;
         }
     }

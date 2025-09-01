@@ -1,4 +1,6 @@
 #include <limits>
+#include <print>
+#include <iostream>
 
 #include "order.hpp"
 #include "../exchange/Exchange.hpp"
@@ -46,7 +48,7 @@ namespace api {
                 return exchange.createOrder(userId, eventId, shareId, type, quantity, price);
             }
             catch (const std::exception& e) {
-                std::cerr << "Error creating order: " << e.what() << '\n';
+                std::print(std::cerr, "Error creating order: {}\n", e.what());
                 return crow::response{400, "Invalid UUID or order type"};
             }
 

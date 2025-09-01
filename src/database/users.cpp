@@ -1,4 +1,5 @@
 #include <SQLiteCpp/SQLiteCpp.h>
+#include <print>
 #include <iostream>
 
 #include "users.hpp"
@@ -25,7 +26,7 @@ namespace database {
             }
         }
         catch (const std::exception& e) {
-            std::cerr << "Error registering user: " << e.what() << "\n";
+            std::print(std::cerr, "Error registering user: {}\n", e.what());
             return false;
         }
     }
@@ -42,7 +43,7 @@ namespace database {
             }
         }
         catch (const std::exception& e) {
-            std::cerr << "Error fetching user balance: " << e.what() << "\n";
+            std::print(std::cerr, "Error fetching user balance: {}\n", e.what());
         }
 
         return 0;
@@ -63,7 +64,7 @@ namespace database {
             }
         }
         catch (const std::exception& e) {
-            std::cerr << "Error fetching user holdings: " << e.what() << "\n";
+            std::print(std::cerr, "Error fetching user holdings: {}\n", e.what());
         }
         return holdings;
     }
@@ -77,11 +78,11 @@ namespace database {
             query.bind(2, utility::uuidToString(userId));
 
             if (query.exec() == 0) {
-                std::cerr << "No rows updated for user ID: " << utility::uuidToString(userId) << "\n";
+                std::print(std::cerr, "No rows updated for user ID: {}\n", utility::uuidToString(userId));
             }
         }
         catch (const std::exception& e) {
-            std::cerr << "Error increasing user balance: " << e.what() << "\n";
+            std::print(std::cerr, "Error increasing user balance: {}\n", e.what());
         }
     }
 }

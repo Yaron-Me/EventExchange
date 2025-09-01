@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <print>
 
 #include "utility.hpp"
 
@@ -12,7 +13,7 @@ namespace database {
 
             std::ifstream schemaFile{filePath};
             if (!schemaFile) {
-                std::cerr << "Error: Could not open " << filePath << " file\n";
+                std::print(std::cerr, "Error: Could not open {} file\n", filePath);
                 std::remove("exchange.db3");
                 return;
             }
@@ -24,7 +25,7 @@ namespace database {
             db.exec(schemaSQL);
         }
         catch (const std::exception& e) {
-            std::cout << "Exception: " << e.what() << '\n';
+            std::print(std::cerr, "Exception: {}", e.what());
         }
     }
 }

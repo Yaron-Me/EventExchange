@@ -1,4 +1,5 @@
 #include <SQLiteCpp/SQLiteCpp.h>
+#include <print>
 #include <iostream>
 #include <map>
 
@@ -48,7 +49,7 @@ namespace database {
             return true;
             
         } catch (const std::exception& e) {
-            std::cerr << "Error creating event: " << e.what() << '\n';
+            std::print(std::cerr, "Error creating event: {}\n", e.what());
             return false;
         }
     }
@@ -96,7 +97,7 @@ namespace database {
                 }
             }
         } catch (const std::exception& e) {
-            std::cerr << "Error fetching events: " << e.what() << '\n';
+            std::print(std::cerr, "Error fetching events: {}\n", e.what());
         }
 
         std::vector<EventData> results;

@@ -4,6 +4,7 @@
 #include <string>
 #include <array>
 #include <ostream>
+#include <print>
 #include <iostream>
 
 #include "../utility/uuid.hpp"
@@ -51,8 +52,8 @@ namespace exchange {
             }
 
             ~Order() {
-                std::cout << fillCosts << "\n";
-                std::cout << parentUser.getOrderCount() << "\n";
+                std::print("{}\n", fillCosts);
+                std::print("{}\n", parentUser.getOrderCount());
             }
 
         private:

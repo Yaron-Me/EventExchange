@@ -1,4 +1,4 @@
-#include <iostream>
+#include <print>
 
 #include "Event.hpp"
 
@@ -19,10 +19,10 @@ namespace exchange {
     }
 
     void Event::addBuyOrder(std::shared_ptr<Order> order) {
-        std::cout << "Adding buy order to event: " << order->id << std::endl;
+        std::print("Adding buy order to event: {}\n", utility::uuidToString(order->id));
     }
 
     void Event::addSellOrder(std::shared_ptr<Order> order) {
-        std::cout << "Adding sell order to event: " << order->id << std::endl;
+        std::print("Adding sell order to event: {}\n", utility::uuidToString(order->id));
     }
 }

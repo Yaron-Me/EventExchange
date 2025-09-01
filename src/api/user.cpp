@@ -1,3 +1,4 @@
+#include <print>
 #include <iostream>
 
 #include "user.hpp"
@@ -9,12 +10,12 @@ namespace api {
         ([](const crow::request& req) {
             auto body = crow::json::load(req.body);
             if (!body) {
-                std::cerr << "Invalid JSON in request body\n";
+                std::print(std::cerr, "Invalid JSON in request body\n");
                 return crow::response{400, "Invalid JSON"};
             }
             
             if (!body.has("username") || !body.has("password")) {
-                std::cerr << "Missing username or password in JSON\n";
+                std::print(std::cerr, "Missing username or password in JSON\n");
                 return crow::response{400, "Missing username or password"};
             }
             
