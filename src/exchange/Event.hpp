@@ -21,7 +21,7 @@ namespace exchange {
             Share yes;
             Share no;
 
-            void Event::addBuyOrder(std::shared_ptr<Order> order);
-            void Event::addSellOrder(std::shared_ptr<Order> order);
+            void addBuyOrder(std::shared_ptr<Order> order);
+            void addSellOrder(std::shared_ptr<Order> order);
     };
 }

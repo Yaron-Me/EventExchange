@@ -4,8 +4,10 @@
 #include <string>
 #include <array>
 #include <ostream>
+#include <iostream>
 
 #include "../utility/uuid.hpp"
+#include "../exchange/User.hpp"
 
 // Forward declarations to avoid circular dependencies
 namespace exchange {
@@ -46,6 +48,11 @@ namespace exchange {
 
             std::uint64_t positionValue() const {
                 return leftOverQuantity() * price;
+            }
+
+            ~Order() {
+                std::cout << fillCosts << "\n";
+                std::cout << parentUser.getOrderCount() << "\n";
             }
 
         private:
