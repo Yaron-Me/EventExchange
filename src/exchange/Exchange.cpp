@@ -25,8 +25,8 @@ namespace exchange {
     crow::response Exchange::createOrder(const boost::uuids::uuid& userId,
                                          const boost::uuids::uuid& eventId,
                                          const boost::uuids::uuid& shareId,
-                                         const OrderType type, const std::uint32_t quantity,
-                                         const std::uint16_t price) {
+                                         const OrderType type, const OrderMode mode,
+                                         const std::uint32_t quantity, const std::uint16_t price) {
         auto& user = getUser(userId);
         
         if (type == OrderType::BUY) {
@@ -34,7 +34,7 @@ namespace exchange {
             const auto tiedUpBalance = user.getTiedUpBalance();
             const auto positionValue = quantity * price;
             if (userBalance - tiedUpBalance < positionValue) {
-                cleanUpUser(userId);
+                cleanupUser(userId);
                 return crow::response{400, "Insufficient balance for order"};
             }
         }
@@ -46,17 +46,17 @@ namespace exchange {
             const auto sellShareCountIt = SellOrderShareCounts.find(shareId);
             const auto sellShareCount = (sellShareCountIt != SellOrderShareCounts.end()) ? sellShareCountIt->second : 0;
             if (ownedShares - sellShareCount < quantity) {
-                cleanUpUser(userId);
+                cleanupUser(userId);
                 return crow::response{400, "Insufficient shares for order"};
             }
         }
 
-        auto order = std::make_shared<Order>(user, userId, type, eventId, shareId, quantity, price);
+        auto order = std::make_shared<Order>(userId, type, mode, eventId, shareId, quantity, price);
         if (addOrder(order)) {
             user.addOrder(order);
         }
         else {
-            cleanUpUser(userId);
+            cleanupUser(userId);
             return crow::response{400, "Order could not be added"};
         }
         
@@ -69,7 +69,7 @@ namespace exchange {
         }
     }
 
-    void Exchange::cleanUpUser(const boost::uuids::uuid& userId) {
+    void Exchange::cleanupUser(const boost::uuids::uuid& userId) {
         if (getUser(userId).getOrderCount() == 0) {
             users.erase(userId);
         }

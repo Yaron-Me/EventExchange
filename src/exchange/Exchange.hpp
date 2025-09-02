@@ -16,8 +16,8 @@ namespace exchange {
             crow::response createOrder(const boost::uuids::uuid& userId,
                              const boost::uuids::uuid& eventId,
                              const boost::uuids::uuid& shareId,
-                             const OrderType type, const std::uint32_t quantity,
-                             const std::uint16_t price);
+                             const OrderType type, const OrderMode mode,
+                             const std::uint32_t quantity, const std::uint16_t price);
 
             User& getUser(const boost::uuids::uuid& userId);
 
@@ -27,7 +27,7 @@ namespace exchange {
             std::map<boost::uuids::uuid, Event> events;
             std::map<boost::uuids::uuid, User> users;
 
-            void cleanUpUser(const boost::uuids::uuid& userId);
+            void cleanupUser(const boost::uuids::uuid& userId);
 
             bool addOrder(std::shared_ptr<Order> order);
     };

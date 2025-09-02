@@ -24,22 +24,23 @@ namespace exchange {
         SELL
     };
 
-    OrderType stringToOrderType(const std::string& typeStr);
-
-    std::ostream& operator<<(std::ostream& os, const OrderType& type);
+    enum class OrderMode {
+        MARKET,
+        LIMIT
+    };
 
     class Order {
         public:
             const boost::uuids::uuid id;
             const boost::uuids::uuid ownerId;
             const OrderType type;
+            const OrderMode mode;
             const boost::uuids::uuid eventId;
             const boost::uuids::uuid shareId;
             const std::uint32_t quantity;
             const std::uint16_t price;
 
-            Order(User& _parentUser,
-                  const boost::uuids::uuid& _ownerId, const OrderType _type,
+            Order(const boost::uuids::uuid& _ownerId, const OrderType _type, const OrderMode _mode,
                   const boost::uuids::uuid& _eventId, const boost::uuids::uuid& _shareId,
                   const std::uint32_t _quantity, const std::uint16_t _price);
 
@@ -52,8 +53,6 @@ namespace exchange {
         private:
             std::uint32_t filledQuantity;
             std::uint64_t fillCosts;
-
-            User& parentUser;
     };
 }
 
@@ -70,6 +69,23 @@ struct std::formatter<exchange::OrderType> {
                 return std::format_to(ctx.out(), "BUY");
             case exchange::OrderType::SELL:
                 return std::format_to(ctx.out(), "SELL");
+        }
+    }
+};
+
+template<>
+struct std::formatter<exchange::OrderMode> {
+    constexpr auto parse(std::format_parse_context& ctx) {
+        return ctx.begin();
+    }
+
+    template<typename FormatContext>
+    auto format(const exchange::OrderMode& mode, FormatContext& ctx) {
+        switch (mode) {
+            case exchange::OrderMode::MARKET:
+                return std::format_to(ctx.out(), "MARKET");
+            case exchange::OrderMode::LIMIT:
+                return std::format_to(ctx.out(), "LIMIT");
         }
     }
 };
