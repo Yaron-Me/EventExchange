@@ -43,18 +43,11 @@ namespace exchange {
                   const boost::uuids::uuid& _eventId, const boost::uuids::uuid& _shareId,
                   const std::uint32_t _quantity, const std::uint16_t _price);
 
-            std::uint32_t leftOverQuantity() const {
-                return quantity - filledQuantity;
-            }
+            std::uint32_t leftOverQuantity() const;
 
-            std::uint64_t positionValue() const {
-                return leftOverQuantity() * price;
-            }
+            std::uint64_t positionValue() const;
 
-            ~Order() {
-                std::print("{}\n", fillCosts);
-                std::print("{}\n", parentUser.getOrderCount());
-            }
+            ~Order();
 
         private:
             std::uint32_t filledQuantity;
@@ -63,3 +56,20 @@ namespace exchange {
             User& parentUser;
     };
 }
+
+template<>
+struct std::formatter<exchange::OrderType> {
+    constexpr auto parse(std::format_parse_context& ctx) {
+        return ctx.begin();
+    }
+    
+    template<typename FormatContext>
+    auto format(const exchange::OrderType& type, FormatContext& ctx) {
+        switch (type) {
+            case exchange::OrderType::BUY:
+                return std::format_to(ctx.out(), "BUY");
+            case exchange::OrderType::SELL:
+                return std::format_to(ctx.out(), "SELL");
+        }
+    }
+};

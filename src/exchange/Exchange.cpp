@@ -18,6 +18,10 @@ namespace exchange {
         return true;
     }
 
+    User& Exchange::getUser(const boost::uuids::uuid& userId) {
+        return users[userId];
+    }
+
     crow::response Exchange::createOrder(const boost::uuids::uuid& userId,
                                          const boost::uuids::uuid& eventId,
                                          const boost::uuids::uuid& shareId,

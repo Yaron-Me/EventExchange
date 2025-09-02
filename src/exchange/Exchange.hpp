@@ -19,9 +19,7 @@ namespace exchange {
                              const OrderType type, const std::uint32_t quantity,
                              const std::uint16_t price);
 
-            User& getUser(const boost::uuids::uuid& userId) {
-                return users[userId];
-            }
+            User& getUser(const boost::uuids::uuid& userId);
 
             Exchange();
 

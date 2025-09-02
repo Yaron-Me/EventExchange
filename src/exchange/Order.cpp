@@ -22,15 +22,16 @@ namespace exchange {
         }
     }
 
-    std::ostream& operator<<(std::ostream& os, const OrderType& type) {
-        switch (type) {
-            case OrderType::BUY:
-                os << "BUY";
-                break;
-            case OrderType::SELL:
-                os << "SELL";
-                break;
-        }
-        return os; // Return the stream to allow chaining (e.g., std::cout << type << '\n';)
+    std::uint32_t Order::leftOverQuantity() const {
+        return quantity - filledQuantity;
+    }
+
+    std::uint64_t Order::positionValue() const {
+        return leftOverQuantity() * price;
+    }
+
+    Order::~Order() {
+        std::print("{}\n", fillCosts);
+        std::print("{}\n", parentUser.getOrderCount());
     }
 }
