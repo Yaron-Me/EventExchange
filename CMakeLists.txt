@@ -17,6 +17,7 @@ list(REMOVE_ITEM SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
 find_package(Boost 1.89 REQUIRED)
 find_package(SQLiteCpp REQUIRED)
 find_package(Catch2 3 REQUIRED)
+find_package(Crow REQUIRED)
 
 # Create a library with all the core functionality
 add_library(exchange_lib ${SOURCES})
@@ -29,6 +30,7 @@ target_link_libraries(exchange_lib PUBLIC
     Boost::boost
     SQLiteCpp
     SQLite::SQLite3
+    Crow::Crow
 )
 
 # Tests executable
