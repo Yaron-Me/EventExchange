@@ -44,15 +44,19 @@ namespace exchange {
                   const boost::uuids::uuid& _eventId, const boost::uuids::uuid& _shareId,
                   const std::uint32_t _quantity, const std::uint16_t _price);
 
-            std::uint32_t leftOverQuantity() const;
+            std::uint32_t leftoverQuantitiy() const;
 
             std::uint64_t positionValue() const;
+
+            std::uint64_t totalTransactedMoney() const;
+
+            std::uint32_t fill(std::uint32_t amount, std::uint16_t price);
 
             ~Order();
 
         private:
             std::uint32_t filledQuantity;
-            std::uint64_t fillCosts;
+            std::uint64_t transactedMoney;
     };
 }
 

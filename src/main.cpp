@@ -18,8 +18,8 @@
 int main() {
     exchange::Exchange exchange;
     // if databasefile does not exist, create it
-    if (!std::filesystem::exists("exchange.db3")) {
-        database::initializeDatabase("../src/database/dblayout.sql");
+    if (!std::filesystem::exists("proddb.db3")) {
+        database::initializeDatabase("../src/database/dblayout.sql", "proddb.db3");
 
         database::createEvent(exchange, "Will I finish this project?",
                               "An event to test the API", "Yes", "No");

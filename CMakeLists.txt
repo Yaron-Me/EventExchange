@@ -7,84 +7,44 @@ project(Exchange VERSION 1.0)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# Define source files
-set(SOURCES
-    src/database/exchange.cpp
-    src/database/users.cpp
-    src/database/utility.cpp
+# Automatically find all source files
+file(GLOB_RECURSE SOURCES "src/*.cpp")
 
-    src/utility/uuid.cpp
+# Remove main.cpp from library sources (since we'll have separate executables)
+list(REMOVE_ITEM SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
 
-    src/exchange/Order.cpp
-    src/exchange/OrderQueue.cpp
-    src/exchange/User.cpp
-    src/exchange/Share.cpp
-    src/exchange/Event.cpp
-    src/exchange/Exchange.cpp
+# Find system packages  
+find_package(Boost 1.89 REQUIRED)
+find_package(SQLiteCpp REQUIRED)
+find_package(Catch2 3 REQUIRED)
 
-    src/api/user.cpp
-    src/api/event.cpp
-    src/api/order.cpp
-
-    src/routes/home.cpp
-
-    src/main.cpp
-)
-
-# Define header files (optional but good practice)
-set(HEADERS
-    src/database/exchange.hpp
-    src/database/users.hpp
-    src/database/utility.hpp
-
-    src/utility/uuid.hpp
-
-    src/exchange/Order.hpp
-    src/exchange/OrderQueue.hpp
-    src/exchange/User.hpp
-    src/exchange/Share.hpp
-    src/exchange/Event.hpp
-    src/exchange/Exchange.hpp
-
-    src/api/api.hpp
-    src/api/user.hpp
-    src/api/event.hpp
-    src/api/order.hpp
-
-    src/routes/routes.hpp
-    src/routes/home.hpp
-)
-
-# Add the executable with all source files
-add_executable(exchange ${SOURCES} ${HEADERS})
-
-# Add include directories
-target_include_directories(exchange SYSTEM PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/boost_1_88_0    # For Boost headers
-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/Crow-1.2.1-Linux/include  # For Crow headers
-)
-
-target_include_directories(exchange PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}     # For local headers
-)
-
-# Define preprocessor macros to use Boost with Crow
-target_compile_definitions(exchange PRIVATE
+# Create a library with all the core functionality
+add_library(exchange_lib ${SOURCES})
+target_include_directories(exchange_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_definitions(exchange_lib PUBLIC
     CROW_USE_BOOST=1
     CROW_STATIC_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/src/static"
 )
-
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/SQLiteCpp-3.3.3)
-
-
-target_link_libraries(exchange
+target_link_libraries(exchange_lib PUBLIC
+    Boost::boost
     SQLiteCpp
-    sqlite3
+    SQLite::SQLite3
 )
+
+# Tests executable
+add_executable(tests tests/test.cpp)
+target_link_libraries(tests PRIVATE 
+    exchange_lib 
+    Catch2::Catch2WithMain
+)
+
+# Main executable
+add_executable(exchange src/main.cpp)
+target_link_libraries(exchange PRIVATE exchange_lib)
 
 # Enhanced compiler flags for strict compilation
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    target_compile_options(exchange PRIVATE
+    target_compile_options(exchange_lib PRIVATE
         -Wall                      # Enable all warnings
         -Wextra                    # Enable extra warnings
         -pedantic                  # Ensure strict standard compliance

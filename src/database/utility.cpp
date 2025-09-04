@@ -7,14 +7,14 @@
 #include "utility.hpp"
 
 namespace database {
-    void initializeDatabase(const std::string& filePath) {
+    void initializeDatabase(const std::string& filePath, const std::string& databaseName) {
         try {
-            SQLite::Database db{"exchange.db3", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE};
+            SQLite::Database db{databaseName, SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE};
 
             std::ifstream schemaFile{filePath};
             if (!schemaFile) {
                 std::print(std::cerr, "Error: Could not open {} file\n", filePath);
-                std::remove("exchange.db3");
+                std::remove(databaseName.c_str());
                 return;
             }
             

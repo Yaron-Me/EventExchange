@@ -16,7 +16,7 @@ namespace exchange {
         std::map<boost::uuids::uuid, std::uint32_t> shares;
         for (const auto& order : orders) {
             if (order->type == OrderType::SELL) {
-                shares[order->shareId] += order->leftOverQuantity();
+                shares[order->shareId] += order->leftoverQuantitiy();
             }
         }
         return shares;
