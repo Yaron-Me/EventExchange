@@ -14,12 +14,16 @@
 #include "database/utility.hpp"
 #include "database/exchange.hpp"
 #include "database/users.hpp"
+#include "database/utility.hpp"
 
 int main() {
     exchange::Exchange exchange;
+    
+    const std::string dbPath = database::getDatabasePath();
+    
     // if databasefile does not exist, create it
-    if (!std::filesystem::exists("proddb.db3")) {
-        database::initializeDatabase("../src/database/dblayout.sql", "proddb.db3");
+    if (!std::filesystem::exists(dbPath)) {
+        database::initializeDatabase("../src/database/dblayout.sql");
 
         database::createEvent(exchange, "Will I finish this project?",
                               "An event to test the API", "Yes", "No");

@@ -4,7 +4,7 @@
 #include <map>
 
 #include "../utility/uuid.hpp"
-
+#include "utility.hpp"
 #include "exchange.hpp"
 
 namespace database {
@@ -20,7 +20,7 @@ namespace database {
         const std::string noShareIdStr{utility::uuidToString(noShareId)};
 
         try {
-            SQLite::Database db{"proddb.db3", SQLite::OPEN_READWRITE};
+            SQLite::Database db{getDatabasePath(), SQLite::OPEN_READWRITE};
             
             SQLite::Transaction transaction{db};
             
@@ -58,7 +58,9 @@ namespace database {
         std::map<std::string, EventData> eventsMap;
 
         try {
-            SQLite::Database db{"proddb.db3", SQLite::OPEN_READONLY};
+            SQLite::Database db{getDatabasePath(), SQLite::OPEN_READONLY};
+
+            std::print("{}", getDatabasePath());
 
             SQLite::Statement query{db, R"(
                 SELECT

@@ -53,7 +53,7 @@ if make -j$(sysctl -n hw.ncpu); then
     echo "Build successful."
     if [ "$RUN_TESTS" = true ]; then
         echo "Running tests..."
-        ./tests
+        DB_PATH="testdb.db3" ./tests
     fi
     if [ "$RUN_AFTER_BUILD" = true ]; then
         clear

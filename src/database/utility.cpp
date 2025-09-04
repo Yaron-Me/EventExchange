@@ -3,18 +3,29 @@
 #include <fstream>
 #include <sstream>
 #include <print>
+#include <cstdlib>
 
 #include "utility.hpp"
 
 namespace database {
-    void initializeDatabase(const std::string& filePath, const std::string& databaseName) {
+    std::string getDatabasePath() {
+        // Check for environment variable first
+        const char* envPath = std::getenv("DB_PATH");
+        if (envPath) {
+            return std::string(envPath);
+        }
+        // Default to production database
+        return "proddb.db3";
+    }
+
+    void initializeDatabase(const std::string& filePath) {
         try {
-            SQLite::Database db{databaseName, SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE};
+            SQLite::Database db{getDatabasePath(), SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE};
 
             std::ifstream schemaFile{filePath};
             if (!schemaFile) {
                 std::print(std::cerr, "Error: Could not open {} file\n", filePath);
-                std::remove(databaseName.c_str());
+                std::remove(getDatabasePath().c_str());
                 return;
             }
             

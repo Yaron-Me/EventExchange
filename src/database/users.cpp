@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "users.hpp"
+#include "utility.hpp"
 #include "../utility/uuid.hpp"
 
 namespace database {
@@ -11,7 +12,7 @@ namespace database {
         const std::string userIdStr{utility::uuidToString(userId)};
 
         try {
-            SQLite::Database db{"proddb.db3", SQLite::OPEN_READWRITE};
+            SQLite::Database db{getDatabasePath(), SQLite::OPEN_READWRITE};
             
             SQLite::Statement query{db, "INSERT INTO users (id, name, password, balance) VALUES (?, ?, ?, ?)"};
             query.bind(1, userIdStr);
@@ -33,7 +34,7 @@ namespace database {
 
     std::int64_t getUserBalance(const boost::uuids::uuid& userId) {
         try {
-            SQLite::Database db{"proddb.db3", SQLite::OPEN_READONLY};
+            SQLite::Database db{getDatabasePath(), SQLite::OPEN_READONLY};
 
             SQLite::Statement query{db, "SELECT balance FROM users WHERE id = ?"};
             query.bind(1, utility::uuidToString(userId));
@@ -52,7 +53,7 @@ namespace database {
     std::map<boost::uuids::uuid, std::uint32_t> getUserHoldings(const boost::uuids::uuid& userId) {
         std::map<boost::uuids::uuid, std::uint32_t> holdings;
         try {
-            SQLite::Database db{"proddb.db3", SQLite::OPEN_READONLY};
+            SQLite::Database db{getDatabasePath(), SQLite::OPEN_READONLY};
 
             SQLite::Statement query{db, "SELECT share_id, quantity FROM user_holdings WHERE user_id = ?"};
             query.bind(1, utility::uuidToString(userId));
@@ -71,7 +72,7 @@ namespace database {
 
     void increaseUserBalance(const boost::uuids::uuid& userId, std::int64_t amount) {
         try {
-            SQLite::Database db{"proddb.db3", SQLite::OPEN_READWRITE};
+            SQLite::Database db{getDatabasePath(), SQLite::OPEN_READWRITE};
 
             SQLite::Statement query{db, "UPDATE users SET balance = balance + ? WHERE id = ?"};
             query.bind(1, amount);
