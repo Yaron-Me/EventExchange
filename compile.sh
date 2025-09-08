@@ -56,7 +56,6 @@ if make -j$(sysctl -n hw.ncpu); then
         DB_PATH="testdb.db3" ./tests
     fi
     if [ "$RUN_AFTER_BUILD" = true ]; then
-        clear
         ./exchange
     fi
 else
