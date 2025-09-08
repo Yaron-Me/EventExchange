@@ -21,7 +21,7 @@ namespace database {
         ShareData noShare;
     };
 
-    bool createEvent(exchange::Exchange& exchange, const std::string& eventName,
+    std::tuple<bool, EventData> createEvent(const std::string& eventName,
                      const std::string& eventDescription, const std::string& yesShareName,
                      const std::string& noShareName);
     const std::vector<EventData> getEvents();

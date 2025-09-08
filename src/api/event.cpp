@@ -22,7 +22,11 @@ namespace api {
             const std::string yesShareName{body["yes_share_name"].s()};
             const std::string noShareName{body["no_share_name"].s()};
             
-            if (database::createEvent(exchange, name, description, yesShareName, noShareName)) {
+            auto [success, eventData] = 
+                database::createEvent(name, description, yesShareName, noShareName);
+
+            if (success) {
+                exchange.createEvent(eventData.id, eventData.yesShare.id, eventData.noShare.id);
                 return crow::response{200, "Event created successfully"};
             } else {
                 return crow::response{400, "Failed to create event"};

@@ -7,12 +7,13 @@
 #include "../utility/uuid.hpp"
 
 namespace database {
-    bool registerUser(const std::string& username, const std::string& password) {
+    std::tuple<bool, boost::uuids::uuid> registerUser(const std::string& username, const std::string& password) {
         const auto userId{utility::generateUUID()};
         const std::string userIdStr{utility::uuidToString(userId)};
 
         try {
             SQLite::Database db{getDatabasePath(), SQLite::OPEN_READWRITE};
+            db.exec("PRAGMA foreign_keys = ON;");
             
             SQLite::Statement query{db, "INSERT INTO users (id, name, password, balance) VALUES (?, ?, ?, ?)"};
             query.bind(1, userIdStr);
@@ -21,20 +22,22 @@ namespace database {
             query.bind(4, 0);
             
             if (query.exec() > 0) {
-                return true;
+                return {true, userId};
             } else {
-                return false;
+                std::print(std::cerr, "Error: Failed to register user, no rows affected\n");
+                return {false, boost::uuids::uuid{}};
             }
         }
         catch (const std::exception& e) {
             std::print(std::cerr, "Error registering user: {}\n", e.what());
-            return false;
+            return {false, boost::uuids::uuid{}};
         }
     }
 
     std::int64_t getUserBalance(const boost::uuids::uuid& userId) {
         try {
             SQLite::Database db{getDatabasePath(), SQLite::OPEN_READONLY};
+            db.exec("PRAGMA foreign_keys = ON;");
 
             SQLite::Statement query{db, "SELECT balance FROM users WHERE id = ?"};
             query.bind(1, utility::uuidToString(userId));
@@ -54,6 +57,7 @@ namespace database {
         std::map<boost::uuids::uuid, std::uint32_t> holdings;
         try {
             SQLite::Database db{getDatabasePath(), SQLite::OPEN_READONLY};
+            db.exec("PRAGMA foreign_keys = ON;");
 
             SQLite::Statement query{db, "SELECT share_id, quantity FROM user_holdings WHERE user_id = ?"};
             query.bind(1, utility::uuidToString(userId));
@@ -70,20 +74,115 @@ namespace database {
         return holdings;
     }
 
-    void increaseUserBalance(const boost::uuids::uuid& userId, std::int64_t amount) {
+    void updateUserBalance(const boost::uuids::uuid& userId, std::int64_t amount) {
         try {
             SQLite::Database db{getDatabasePath(), SQLite::OPEN_READWRITE};
+            db.exec("PRAGMA foreign_keys = ON;");
 
             SQLite::Statement query{db, "UPDATE users SET balance = balance + ? WHERE id = ?"};
             query.bind(1, amount);
             query.bind(2, utility::uuidToString(userId));
 
             if (query.exec() == 0) {
-                std::print(std::cerr, "No rows updated for user ID: {}\n", utility::uuidToString(userId));
+                std::print(std::cerr, "Error: Failed to update user balance, no rows affected\n");
             }
         }
         catch (const std::exception& e) {
-            std::print(std::cerr, "Error increasing user balance: {}\n", e.what());
+            std::print(std::cerr, "Error updating user balance: {}\n", e.what());
         }
+    }
+
+    void updateUserHoldings(const boost::uuids::uuid& userId, const boost::uuids::uuid& shareId, std::int64_t amount) {
+        try {
+            SQLite::Database db{getDatabasePath(), SQLite::OPEN_READWRITE};
+            db.exec("PRAGMA foreign_keys = ON;");
+
+            SQLite::Statement query{db, R"(
+                INSERT INTO user_holdings (user_id, share_id, quantity)
+                VALUES (?, ?, ?)
+                ON CONFLICT(user_id, share_id) DO UPDATE SET quantity = quantity + excluded.quantity
+            )"};
+            query.bind(1, utility::uuidToString(userId));
+            query.bind(2, utility::uuidToString(shareId));
+            query.bind(3, amount);
+
+            if (query.exec() == 0) {
+                std::print(std::cerr, "Error: Failed to update user holdings, no rows affected\n");
+            }
+
+            // Delete row if quantity becomes 0
+            SQLite::Statement deleteQuery{db, R"(
+                DELETE FROM user_holdings 
+                WHERE user_id = ? AND share_id = ? AND quantity = 0
+            )"};
+            deleteQuery.bind(1, utility::uuidToString(userId));
+            deleteQuery.bind(2, utility::uuidToString(shareId));
+            deleteQuery.exec();
+        }
+        catch (const std::exception& e) {
+            std::print(std::cerr, "Error updating user holdings: {}\n", e.what());
+        }
+    }
+
+    void createTransaction(const boost::uuids::uuid& userId, const boost::uuids::uuid& shareId,
+                           std::int64_t quantity, std::uint16_t price) {
+        const auto transactionId = utility::generateUUID();
+        
+        try {
+            SQLite::Database db{getDatabasePath(), SQLite::OPEN_READWRITE};
+            db.exec("PRAGMA foreign_keys = ON;");
+
+            SQLite::Statement query{db, "INSERT INTO transactions (id, user_id, share_id, quantity, price) VALUES (?, ?, ?, ?, ?)"};
+            query.bind(1, utility::uuidToString(transactionId));
+            query.bind(2, utility::uuidToString(userId));
+            query.bind(3, utility::uuidToString(shareId));
+            query.bind(4, quantity);
+            query.bind(5, price);
+
+            if (query.exec() == 0) {
+                std::print(std::cerr, "Error: Failed to create transaction, no rows affected\n");
+            }
+        }
+        catch (const std::exception& e) {
+            std::print(std::cerr, "Error creating transaction: {}\n", e.what());
+        }                
+    }
+
+    std::vector<TransactionData> getUserTransactions(const boost::uuids::uuid& userId, std::size_t offset, std::size_t limit) {
+        std::vector<TransactionData> transactions;
+        
+        try {
+            SQLite::Database db{getDatabasePath(), SQLite::OPEN_READONLY};
+            db.exec("PRAGMA foreign_keys = ON;");
+
+            SQLite::Statement query{db, R"(
+                SELECT id, user_id, share_id, quantity, price, timestamp 
+                FROM transactions 
+                WHERE user_id = ? 
+                ORDER BY timestamp DESC 
+                LIMIT ? OFFSET ?
+            )"};
+            
+            query.bind(1, utility::uuidToString(userId));
+            query.bind(2, static_cast<int>(limit));
+            query.bind(3, static_cast<int>(offset));
+
+            while (query.executeStep()) {
+                TransactionData transaction{
+                    utility::stringToUUID(query.getColumn(0).getText()),
+                    utility::stringToUUID(query.getColumn(1).getText()),
+                    utility::stringToUUID(query.getColumn(2).getText()),
+                    query.getColumn(3).getInt64(),
+                    static_cast<std::uint16_t>(query.getColumn(4).getUInt()),
+                    query.getColumn(5).getText()
+                };
+                transactions.push_back(transaction);
+            }
+        }
+        catch (const std::exception& e) {
+            std::print(std::cerr, "Error fetching user transactions: {}\n", e.what());
+        }
+        
+        return transactions;
     }
 }

@@ -8,7 +8,7 @@
 #include "exchange.hpp"
 
 namespace database {
-    bool createEvent(exchange::Exchange& exchange, const std::string& eventName,
+    std::tuple<bool, EventData> createEvent(const std::string& eventName,
                      const std::string& eventDescription, const std::string& yesShareName,
                      const std::string& noShareName) {
         const auto eventId{utility::generateUUID()};
@@ -21,6 +21,7 @@ namespace database {
 
         try {
             SQLite::Database db{getDatabasePath(), SQLite::OPEN_READWRITE};
+            db.exec("PRAGMA foreign_keys = ON;");
             
             SQLite::Transaction transaction{db};
             
@@ -43,14 +44,22 @@ namespace database {
             noShareQuery.exec();
 
             transaction.commit();
-
-            exchange.createEvent(eventId, yesShareId, noShareId);
             
-            return true;
+            // Create EventData struct to return
+            EventData eventData{
+                .id = eventId,
+                .name = eventName,
+                .description = eventDescription,
+                .createdAt = "", // Will be set by database
+                .yesShare = {yesShareId, yesShareName},
+                .noShare = {noShareId, noShareName}
+            };
+            
+            return {true, eventData};
             
         } catch (const std::exception& e) {
             std::print(std::cerr, "Error creating event: {}\n", e.what());
-            return false;
+            return {false, EventData{}};
         }
     }
 

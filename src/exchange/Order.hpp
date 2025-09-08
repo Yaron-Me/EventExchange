@@ -32,31 +32,31 @@ namespace exchange {
     class Order {
         public:
             const boost::uuids::uuid id;
-            const boost::uuids::uuid ownerId;
+            const boost::uuids::uuid userId;
             const OrderType type;
             const OrderMode mode;
             const boost::uuids::uuid eventId;
             const boost::uuids::uuid shareId;
-            const std::uint32_t quantity;
+            const std::uint64_t quantity;
             const std::uint16_t price;
 
-            Order(const boost::uuids::uuid& _ownerId, const OrderType _type, const OrderMode _mode,
+            Order(const boost::uuids::uuid& _userId, const OrderType _type, const OrderMode _mode,
                   const boost::uuids::uuid& _eventId, const boost::uuids::uuid& _shareId,
-                  const std::uint32_t _quantity, const std::uint16_t _price);
+                  const std::uint64_t _quantity, const std::uint16_t _price);
 
-            std::uint32_t leftoverQuantitiy() const;
+            std::uint64_t leftoverQuantitiy() const;
 
             std::uint64_t positionValue() const;
 
-            std::uint64_t totalTransactedMoney() const;
+            std::uint64_t totalTransactedValue() const;
 
-            std::uint32_t fill(std::uint32_t amount, std::uint16_t price);
+            std::uint64_t fill(std::uint64_t quantityToFill, std::uint16_t price);
 
             ~Order();
 
         private:
-            std::uint32_t filledQuantity;
-            std::uint64_t transactedMoney;
+            std::uint64_t filledQuantity;
+            std::uint64_t transactedValue;
     };
 }
 

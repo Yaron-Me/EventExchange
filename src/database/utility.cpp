@@ -18,13 +18,16 @@ namespace database {
         return "proddb.db3";
     }
 
-    void initializeDatabase(const std::string& filePath) {
+    void initializeDatabase() {
         try {
             SQLite::Database db{getDatabasePath(), SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE};
 
-            std::ifstream schemaFile{filePath};
+            // Enable foreign key constraints
+            db.exec("PRAGMA foreign_keys = ON;");
+
+            std::ifstream schemaFile{"../src/database/dblayout.sql"};
             if (!schemaFile) {
-                std::print(std::cerr, "Error: Could not open {} file\n", filePath);
+                std::print(std::cerr, "Error: Could not open {} file\n", "../src/database/dblayout.sql");
                 std::remove(getDatabasePath().c_str());
                 return;
             }
@@ -34,6 +37,15 @@ namespace database {
             const std::string schemaSQL{buffer.str()};
             
             db.exec(schemaSQL);
+        }
+        catch (const std::exception& e) {
+            std::print(std::cerr, "Exception: {}", e.what());
+        }
+    }
+
+    void deleteDatabase() {
+        try {
+            std::remove(getDatabasePath().c_str());
         }
         catch (const std::exception& e) {
             std::print(std::cerr, "Exception: {}", e.what());

@@ -21,8 +21,10 @@ namespace api {
             
             const std::string username{body["username"].s()};
             const std::string password{body["password"].s()};
-        
-            if (database::registerUser(username, password)) {
+
+            auto [success, userId] = database::registerUser(username, password);
+
+            if (success) {
                 return crow::response{200, "User registered successfully"};
             } else {
                 return crow::response{400, "Failed to register user"};

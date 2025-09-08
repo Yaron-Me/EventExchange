@@ -23,13 +23,13 @@ int main() {
     
     // if databasefile does not exist, create it
     if (!std::filesystem::exists(dbPath)) {
-        database::initializeDatabase("../src/database/dblayout.sql");
+        database::initializeDatabase();
 
-        database::createEvent(exchange, "Will I finish this project?",
+        database::createEvent("Will I finish this project?",
                               "An event to test the API", "Yes", "No");
-        database::createEvent(exchange, "Who will win the fight?",
+        database::createEvent("Who will win the fight?",
                               "An event to test the API", "Fighter A", "Fighter B");
-        database::createEvent(exchange, "Example Event", "This is an example event",
+        database::createEvent("Example Event", "This is an example event",
                            "Yes Share", "No Share");
 
         database::registerUser("testuser", "password123");

@@ -44,7 +44,6 @@ CREATE TABLE transactions (
     id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
     share_id TEXT NOT NULL,
-    transaction_type TEXT NOT NULL CHECK (transaction_type IN ('BUY', 'SELL')),
     quantity INTEGER NOT NULL,
     price INTEGER NOT NULL,
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
