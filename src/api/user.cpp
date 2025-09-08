@@ -3,6 +3,7 @@
 
 #include "user.hpp"
 #include "../database/users.hpp"
+#include "utility.hpp"
 
 namespace api {
     void setupUserApi(crow::SimpleApp& app) {
@@ -14,7 +15,7 @@ namespace api {
                 return crow::response{400, "Invalid JSON"};
             }
             
-            if (!body.has("username") || !body.has("password")) {
+            if (!bodyContainsRequiredFields(body, {"username", "password"})) {
                 std::print(std::cerr, "Missing username or password in JSON\n");
                 return crow::response{400, "Missing username or password"};
             }

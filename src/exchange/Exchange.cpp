@@ -22,7 +22,7 @@ namespace exchange {
         return users[userId];
     }
 
-    crow::response Exchange::createOrder(const boost::uuids::uuid& userId,
+    std::tuple<bool, std::string> Exchange::createOrder(const boost::uuids::uuid& userId,
                                          const boost::uuids::uuid& eventId,
                                          const boost::uuids::uuid& shareId,
                                          const OrderType type, const OrderMode mode,
@@ -35,7 +35,7 @@ namespace exchange {
             const auto positionValue = quantity * price;
             if (userBalance - tiedUpBalance < positionValue) {
                 cleanupUser(userId);
-                return crow::response{400, "Insufficient balance for order"};
+                return {false, "Insufficient balance for order"};
             }
         }
         else if (type == OrderType::SELL) {
@@ -47,7 +47,7 @@ namespace exchange {
             const auto sellShareCount = (sellShareCountIt != SellOrderShareCounts.end()) ? sellShareCountIt->second : 0;
             if (ownedShares - sellShareCount < quantity) {
                 cleanupUser(userId);
-                return crow::response{400, "Insufficient shares for order"};
+                return {false, "Insufficient holdings for order"};
             }
         }
 
@@ -57,10 +57,10 @@ namespace exchange {
         }
         else {
             cleanupUser(userId);
-            return crow::response{400, "Order could not be added"};
+            return {false, "Order could not be added"};
         }
         
-        return crow::response{201, "Order created successfully"};
+        return {true, "Order created successfully"};
     }
 
     Exchange::Exchange() {

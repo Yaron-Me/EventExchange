@@ -1,6 +1,7 @@
 #include "event.hpp"
 #include "../database/exchange.hpp"
 #include "../utility/uuid.hpp"
+#include "utility.hpp"
 
 namespace api {
     void setupEventApi(crow::SimpleApp& app, exchange::Exchange& exchange) {
@@ -12,8 +13,7 @@ namespace api {
                 return crow::response(400, "Invalid JSON");
             }
             
-            if (!body.has("name") || !body.has("description") || 
-                !body.has("yes_share_name") || !body.has("no_share_name")) {
+            if (!bodyContainsRequiredFields(body, {"name", "description", "yes_share_name", "no_share_name"})) {
                 return crow::response{400, "Missing required fields"};
             }
             

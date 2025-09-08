@@ -13,7 +13,7 @@ namespace exchange {
                              const boost::uuids::uuid& yesId,
                              const boost::uuids::uuid& noId);
 
-            crow::response createOrder(const boost::uuids::uuid& userId,
+            std::tuple<bool, std::string> createOrder(const boost::uuids::uuid& userId,
                              const boost::uuids::uuid& eventId,
                              const boost::uuids::uuid& shareId,
                              const OrderType type, const OrderMode mode,
