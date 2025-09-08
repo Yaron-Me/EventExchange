@@ -52,7 +52,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         -pedantic                  # Ensure strict standard compliance
         -Werror                    # Treat warnings as errors
         -Wconversion               # Warn about implicit conversions
-        # -Wsign-conversion          # Warn about sign conversions
+        -Wsign-conversion          # Warn about sign conversions
         -Wold-style-cast           # Warn about C-style casts
         -Wshadow                   # Warn about shadowed variables
         -Wnon-virtual-dtor         # Warn about classes with virtual functions but no virtual destructor

@@ -10,7 +10,7 @@ namespace exchange {
                                const boost::uuids::uuid& yesId,
                                const boost::uuids::uuid& noId) {
         
-        if (events.find(eventId) != events.end()) {
+        if (events.contains(eventId)) {
             return false;
         }
 
@@ -40,11 +40,9 @@ namespace exchange {
         }
         else if (type == OrderType::SELL) {
             const auto userHoldings = database::getUserHoldings(userId);
-            const auto holdingsIt = userHoldings.find(shareId);
-            const auto ownedShares = (holdingsIt != userHoldings.end()) ? holdingsIt->second : 0;
+            const auto ownedShares = userHoldings.contains(shareId) ? userHoldings.at(shareId) : 0;
             const auto SellOrderShareCounts = user.getSellOrderShareCounts();
-            const auto sellShareCountIt = SellOrderShareCounts.find(shareId);
-            const auto sellShareCount = (sellShareCountIt != SellOrderShareCounts.end()) ? sellShareCountIt->second : 0;
+            const auto sellShareCount = SellOrderShareCounts.contains(shareId) ? SellOrderShareCounts.at(shareId) : 0;
             if (ownedShares - sellShareCount < quantity) {
                 cleanupUser(userId);
                 return {false, "Insufficient holdings for order"};

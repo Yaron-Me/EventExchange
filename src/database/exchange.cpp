@@ -94,17 +94,19 @@ namespace database {
                 const auto shareName{query.getColumn(5).getString()};
                 const auto shareType{query.getColumn(6).getString()};
 
-                if (eventsMap.find(eventIdStr) == eventsMap.end()) {
-                    eventsMap[eventIdStr].id = utility::stringToUUID(eventIdStr);
-                    eventsMap[eventIdStr].name = eventName;
-                    eventsMap[eventIdStr].description = description;
-                    eventsMap[eventIdStr].createdAt = createdAt;
-                }
+                auto [it, inserted] = eventsMap.try_emplace(eventIdStr, EventData{
+                    .id = utility::stringToUUID(eventIdStr),
+                    .name = eventName,
+                    .description = description,
+                    .createdAt = createdAt,
+                    .yesShare = {},
+                    .noShare = {}
+                });
 
                 if (shareType == "YES") {
-                    eventsMap[eventIdStr].yesShare = {utility::stringToUUID(shareIdStr), shareName};
+                    it->second.yesShare = {utility::stringToUUID(shareIdStr), shareName};
                 } else if (shareType == "NO") {
-                    eventsMap[eventIdStr].noShare = {utility::stringToUUID(shareIdStr), shareName};
+                    it->second.noShare = {utility::stringToUUID(shareIdStr), shareName};
                 }
             }
         } catch (const std::exception& e) {
