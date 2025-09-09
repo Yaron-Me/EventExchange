@@ -1,9 +1,9 @@
 #include <print>
 #include <iostream>
 
-#include "Exchange.hpp"
+#include "exchange.hpp"
 #include "../database/exchange.hpp"
-#include "../database/users.hpp"
+#include "../database/user.hpp"
 
 namespace exchange {
     bool Exchange::createEvent(const boost::uuids::uuid& eventId,
@@ -27,29 +27,29 @@ namespace exchange {
                                          const boost::uuids::uuid& shareId,
                                          const OrderType type, const OrderMode mode,
                                          const std::uint32_t quantity, const std::uint16_t price) {
-        auto& user = getUser(userId);
-        
+        auto& user{getUser(userId)};
+
         if (type == OrderType::BUY) {
-            const auto userBalance = database::getUserBalance(userId);
-            const auto tiedUpBalance = user.getTiedUpBalance();
-            const auto positionValue = quantity * price;
+            const auto userBalance{database::getUserBalance(userId)};
+            const auto tiedUpBalance{user.getTiedUpBalance()};
+            const auto positionValue{quantity * price};
             if (userBalance - tiedUpBalance < positionValue) {
                 cleanupUser(userId);
                 return {false, "Insufficient balance for order"};
             }
         }
         else if (type == OrderType::SELL) {
-            const auto userHoldings = database::getUserHoldings(userId);
-            const auto ownedShares = userHoldings.contains(shareId) ? userHoldings.at(shareId) : 0;
-            const auto SellOrderShareCounts = user.getSellOrderShareCounts();
-            const auto sellShareCount = SellOrderShareCounts.contains(shareId) ? SellOrderShareCounts.at(shareId) : 0;
+            const auto userHoldings{database::getUserHoldings(userId)};
+            const auto ownedShares{userHoldings.contains(shareId) ? userHoldings.at(shareId) : 0};
+            const auto SellOrderShareCounts{user.getSellOrderShareCounts()};
+            const auto sellShareCount{SellOrderShareCounts.contains(shareId) ? SellOrderShareCounts.at(shareId) : 0};
             if (ownedShares - sellShareCount < quantity) {
                 cleanupUser(userId);
                 return {false, "Insufficient holdings for order"};
             }
         }
 
-        auto order = std::make_shared<Order>(userId, type, mode, eventId, shareId, quantity, price);
+        auto order{std::make_shared<Order>(userId, type, mode, eventId, shareId, quantity, price)};
         if (addOrder(order)) {
             user.addOrder(order);
         }
@@ -75,7 +75,7 @@ namespace exchange {
 
     bool Exchange::addOrder(std::shared_ptr<Order> order) {
         try {
-            auto& event = events.at(order->eventId);
+            auto& event{events.at(order->eventId)};
             event.addOrder(order);
             return true;
         }

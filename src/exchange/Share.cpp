@@ -2,7 +2,7 @@
 #include <print>
 #include <iostream>
 
-#include "Share.hpp"
+#include "share.hpp"
 
 namespace exchange {
     Share::Share(const boost::uuids::uuid& _id) : id{_id} {}

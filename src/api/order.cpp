@@ -3,16 +3,16 @@
 #include <iostream>
 
 #include "order.hpp"
-#include "../exchange/Exchange.hpp"
+#include "../exchange/exchange.hpp"
 #include "../utility/uuid.hpp"
-#include "../exchange/Order.hpp"
+#include "../exchange/order.hpp"
 #include "utility.hpp"
 
 namespace api {
     void setupOrderApi(crow::SimpleApp& app, exchange::Exchange& exchange) {
         CROW_ROUTE(app, "/api/orders").methods("POST"_method)
         ([&exchange](const crow::request& req) {
-            auto body = crow::json::load(req.body);
+            auto body{crow::json::load(req.body)};
             if (!body) {
                 return crow::response(400, "Invalid JSON");
             }
@@ -45,7 +45,7 @@ namespace api {
                 const std::uint32_t quantity{static_cast<std::uint32_t>(body["quantity"].u())};
                 const std::uint16_t price{static_cast<std::uint16_t>(body["price"].u())};
 
-                auto [success, message] = exchange.createOrder(userId, eventId, shareId, type, mode, quantity, price);
+                auto [success, message]{exchange.createOrder(userId, eventId, shareId, type, mode, quantity, price)};
                 if (success) {
                     return crow::response{201, message};
                 } else {

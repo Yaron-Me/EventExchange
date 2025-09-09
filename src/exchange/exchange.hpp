@@ -3,8 +3,8 @@
 #include <vector>
 #include <crow.h>
 
-#include "Event.hpp"
-#include "User.hpp"
+#include "event.hpp"
+#include "user.hpp"
 
 namespace exchange {
     class Exchange {

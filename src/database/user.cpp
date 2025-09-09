@@ -2,14 +2,14 @@
 #include <print>
 #include <iostream>
 
-#include "users.hpp"
+#include "user.hpp"
 #include "utility.hpp"
 #include "../utility/uuid.hpp"
 
 namespace database {
     std::tuple<bool, boost::uuids::uuid> registerUser(const std::string& username, const std::string& password) {
         const auto userId{utility::generateUUID()};
-        const std::string userIdStr{utility::uuidToString(userId)};
+        const auto userIdStr{utility::uuidToString(userId)};
 
         try {
             SQLite::Database db{getDatabasePath(), SQLite::OPEN_READWRITE};
@@ -63,8 +63,8 @@ namespace database {
             query.bind(1, utility::uuidToString(userId));
 
             while (query.executeStep()) {
-                auto shareId = utility::stringToUUID(query.getColumn(0).getText());
-                auto quantity = query.getColumn(1).getUInt();
+                const auto shareId{utility::stringToUUID(query.getColumn(0).getText())};
+                const auto quantity{query.getColumn(1).getUInt()};
                 holdings[shareId] = quantity;
             }
         }

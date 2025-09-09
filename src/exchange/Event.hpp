@@ -3,8 +3,8 @@
 #include <boost/uuid.hpp>
 #include <vector>
 
-#include "Share.hpp"
-#include "Order.hpp"
+#include "share.hpp"
+#include "order.hpp"
 
 namespace exchange {
     class Event {

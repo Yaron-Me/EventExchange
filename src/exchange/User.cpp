@@ -1,11 +1,11 @@
 #include <map>
 
-#include "User.hpp"
-#include "Order.hpp"
+#include "user.hpp"
+#include "order.hpp"
 
 namespace exchange {
     std::int64_t User::getTiedUpBalance() const {
-        std::int64_t totalValue = 0;
+        std::int64_t totalValue{0};
         for (const auto& order : orders) {
             totalValue += order->positionValue();
         }

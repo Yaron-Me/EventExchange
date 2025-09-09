@@ -2,7 +2,7 @@
 
 #include <crow.h>
 
-#include "../exchange/Exchange.hpp"
+#include "../exchange/exchange.hpp"
 
 namespace api {
     void setupOrderApi(crow::SimpleApp& app, exchange::Exchange& exchange);

@@ -8,7 +8,7 @@ namespace api {
         // Create event route
         CROW_ROUTE(app, "/api/events").methods("POST"_method)
         ([&exchange](const crow::request& req) {
-            auto body = crow::json::load(req.body);
+            auto body{crow::json::load(req.body)};
             if (!body) {
                 return crow::response(400, "Invalid JSON");
             }
@@ -22,8 +22,7 @@ namespace api {
             const std::string yesShareName{body["yes_share_name"].s()};
             const std::string noShareName{body["no_share_name"].s()};
             
-            auto [success, eventData] = 
-                database::createEvent(name, description, yesShareName, noShareName);
+            auto [success, eventData]{database::createEvent(name, description, yesShareName, noShareName)};
 
             if (success) {
                 exchange.createEvent(eventData.id, eventData.yesShare.id, eventData.noShare.id);
@@ -36,7 +35,7 @@ namespace api {
         
         CROW_ROUTE(app, "/api/events").methods("GET"_method)
         ([]() {
-            auto events = database::getEvents();
+            auto events{database::getEvents()};
 
             crow::json::wvalue::list response;
             for (const auto& event : events) {

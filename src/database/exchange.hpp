@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "../exchange/Exchange.hpp"
+#include "../exchange/exchange.hpp"
 #include "../utility/uuid.hpp"
 
 namespace database {

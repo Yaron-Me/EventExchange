@@ -4,16 +4,16 @@
 
 #include "utility/uuid.hpp"
 
-#include "exchange/Order.hpp"
-#include "exchange/Event.hpp"
-#include "exchange/Exchange.hpp"
+#include "exchange/order.hpp"
+#include "exchange/event.hpp"
+#include "exchange/exchange.hpp"
 
 #include "api/api.hpp"
 #include "routes/routes.hpp"
 
 #include "database/utility.hpp"
 #include "database/exchange.hpp"
-#include "database/users.hpp"
+#include "database/user.hpp"
 #include "database/utility.hpp"
 
 int main() {

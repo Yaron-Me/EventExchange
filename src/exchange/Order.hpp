@@ -8,7 +8,7 @@
 #include <iostream>
 
 #include "../utility/uuid.hpp"
-#include "../exchange/User.hpp"
+#include "../exchange/user.hpp"
 
 // Forward declarations to avoid circular dependencies
 namespace exchange {
@@ -17,7 +17,7 @@ namespace exchange {
 }
 
 namespace exchange {
-    static const std::uint16_t MAX_DENOMINATIONS = 100;
+    static const std::uint16_t MAX_DENOMINATIONS{100};
 
     enum class OrderType {
         BUY,
@@ -55,8 +55,8 @@ namespace exchange {
             ~Order();
 
         private:
-            std::uint64_t filledQuantity;
-            std::uint64_t transactedValue;
+            std::uint64_t filledQuantity{0};
+            std::uint64_t transactedValue{0};
     };
 }
 

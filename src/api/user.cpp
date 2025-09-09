@@ -2,14 +2,14 @@
 #include <iostream>
 
 #include "user.hpp"
-#include "../database/users.hpp"
+#include "../database/user.hpp"
 #include "utility.hpp"
 
 namespace api {
     void setupUserApi(crow::SimpleApp& app) {
         CROW_ROUTE(app, "/api/register").methods("POST"_method)
         ([](const crow::request& req) {
-            auto body = crow::json::load(req.body);
+            auto body{crow::json::load(req.body)};
             if (!body) {
                 std::print(std::cerr, "Invalid JSON in request body\n");
                 return crow::response{400, "Invalid JSON"};
@@ -23,7 +23,7 @@ namespace api {
             const std::string username{body["username"].s()};
             const std::string password{body["password"].s()};
 
-            auto [success, userId] = database::registerUser(username, password);
+            auto [success, userId]{database::registerUser(username, password)};
 
             if (success) {
                 return crow::response{200, "User registered successfully"};

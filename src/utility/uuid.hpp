@@ -2,7 +2,7 @@
 
 #include <boost/uuid.hpp>
 #include <string>
-#include "../exchange/Order.hpp"
+#include "../exchange/order.hpp"
 
 namespace utility {
     const boost::uuids::uuid generateUUID();
