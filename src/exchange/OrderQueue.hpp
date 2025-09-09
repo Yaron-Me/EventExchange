@@ -14,6 +14,7 @@ namespace exchange {
             void addOrder(const std::shared_ptr<Order>& order);
             void cancelOrder(const std::shared_ptr<Order>& order);
             std::uint64_t getTotalQuantity() const;
+            std::size_t getOrderCount() const;
             std::uint64_t fill(std::uint64_t fillQuantity, std::uint16_t fillPrice);
 
         private:

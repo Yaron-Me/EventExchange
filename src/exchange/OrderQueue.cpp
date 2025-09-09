@@ -19,6 +19,10 @@ namespace exchange {
         return totalQuantity;
     }
 
+    std::size_t OrderQueue::getOrderCount() const {
+        return orderQueue.size();
+    }
+
     std::uint64_t OrderQueue::fill(std::uint64_t fillQuantity, std::uint16_t fillPrice) {
         auto leftToFill{fillQuantity};
         while (leftToFill > 0 && getTotalQuantity() > 0) {

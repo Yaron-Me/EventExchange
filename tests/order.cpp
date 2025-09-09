@@ -10,15 +10,16 @@
 
 using namespace utility;
 using namespace exchange;
+using namespace database;
 
 TEST_CASE("Buy Order") {
-    database::deleteDatabase();
-    database::initializeDatabase();
+    deleteDatabase();
+    initializeDatabase();
 
-    const auto [success, userId] = database::registerUser("testuser", "password");
-    const auto [eventCreated, eventData] = database::createEvent("Test Event", "This is a test event", "Yes Share", "No Share");
+    const auto [success, userId] = registerUser("testuser", "password");
+    const auto [eventCreated, eventData] = createEvent("Test Event", "This is a test event", "Yes Share", "No Share");
 
-    database::updateUserBalance(userId, 5000);
+    updateUserBalance(userId, 5000);
 
     Order order{userId, OrderType::BUY, OrderMode::MARKET,
                 eventData.id, eventData.yesShare.id, 100, 50};
@@ -34,10 +35,10 @@ TEST_CASE("Buy Order") {
         REQUIRE(filled == 5);
         REQUIRE(order.totalTransactedValue() == 5 * 40);
 
-        const auto userBalance = database::getUserBalance(userId);
+        const auto userBalance = getUserBalance(userId);
         REQUIRE(userBalance == 5000 - order.totalTransactedValue());
 
-        const auto transactions = database::getUserTransactions(userId, 0, 1);
+        const auto transactions = getUserTransactions(userId, 0, 1);
         REQUIRE(transactions[0].amount == filled);
         REQUIRE(transactions[0].price == 40);
         REQUIRE(transactions[0].shareId == eventData.yesShare.id);
@@ -51,10 +52,10 @@ TEST_CASE("Buy Order") {
         REQUIRE(filled == 0);
         REQUIRE(order.totalTransactedValue() == 5 * 40);
 
-        const auto userBalance = database::getUserBalance(userId);
+        const auto userBalance = getUserBalance(userId);
         REQUIRE(userBalance == 5000 - order.totalTransactedValue());
 
-        const auto transactions = database::getUserTransactions(userId, 0, 2);
+        const auto transactions = getUserTransactions(userId, 0, 2);
         REQUIRE(transactions.size() == 1);
     }
     {
@@ -65,10 +66,10 @@ TEST_CASE("Buy Order") {
         REQUIRE(filled == 95);
         REQUIRE(order.totalTransactedValue() == 5*40 + 95*50);
 
-        const auto userBalance = database::getUserBalance(userId);
+        const auto userBalance = getUserBalance(userId);
         REQUIRE(userBalance == 5000 - order.totalTransactedValue());
 
-        const auto transactions = database::getUserTransactions(userId, 1, 3);
+        const auto transactions = getUserTransactions(userId, 1, 3);
         REQUIRE(transactions.size() == 1);
         REQUIRE(transactions[0].amount == filled);
         REQUIRE(transactions[0].price == 50);
@@ -78,13 +79,13 @@ TEST_CASE("Buy Order") {
 }
 
 TEST_CASE("Sell order") {
-    database::deleteDatabase();
-    database::initializeDatabase();
+    deleteDatabase();
+    initializeDatabase();
 
-    const auto [success, userId] = database::registerUser("testuser", "password");
-    const auto [eventCreated, eventData] = database::createEvent("Test Event", "This is a test event", "Yes Share", "No Share");
+    const auto [success, userId] = registerUser("testuser", "password");
+    const auto [eventCreated, eventData] = createEvent("Test Event", "This is a test event", "Yes Share", "No Share");
 
-    database::updateUserHoldings(userId, eventData.yesShare.id, 100);
+    updateUserHoldings(userId, eventData.yesShare.id, 100);
 
     Order order{userId, OrderType::SELL, OrderMode::MARKET,
                 eventData.id, eventData.yesShare.id, 100, 50};
@@ -100,10 +101,10 @@ TEST_CASE("Sell order") {
         REQUIRE(filled == 0);
         REQUIRE(order.totalTransactedValue() == 0);
 
-        const auto userBalance = database::getUserBalance(userId);
+        const auto userBalance = getUserBalance(userId);
         REQUIRE(userBalance == 0 + order.totalTransactedValue());
 
-        const auto transactions = database::getUserTransactions(userId, 0, 1);
+        const auto transactions = getUserTransactions(userId, 0, 1);
         REQUIRE(transactions.size() == 0);
     }
     {
@@ -114,10 +115,10 @@ TEST_CASE("Sell order") {
         REQUIRE(filled == 5);
         REQUIRE(order.totalTransactedValue() == 5*51);
 
-        const auto userBalance = database::getUserBalance(userId);
+        const auto userBalance = getUserBalance(userId);
         REQUIRE(userBalance == 0 + order.totalTransactedValue());
 
-        const auto transactions = database::getUserTransactions(userId, 0, 2);
+        const auto transactions = getUserTransactions(userId, 0, 2);
         REQUIRE(transactions[0].amount == -filled);
         REQUIRE(transactions[0].price == 51);
         REQUIRE(transactions[0].shareId == eventData.yesShare.id);
@@ -131,10 +132,10 @@ TEST_CASE("Sell order") {
         REQUIRE(filled == 95);
         REQUIRE(order.totalTransactedValue() == 5*51 + 95*50);
 
-        const auto userBalance = database::getUserBalance(userId);
+        const auto userBalance = getUserBalance(userId);
         REQUIRE(userBalance == 0 + order.totalTransactedValue());
 
-        const auto transactions = database::getUserTransactions(userId, 1, 3);
+        const auto transactions = getUserTransactions(userId, 1, 3);
         REQUIRE(transactions.size() == 1);
         REQUIRE(transactions[0].amount == -filled);
         REQUIRE(transactions[0].price == 50);
