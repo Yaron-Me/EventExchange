@@ -23,19 +23,19 @@ namespace exchange {
         return orderQueue.size();
     }
 
-    std::uint64_t OrderQueue::fill(std::uint64_t fillQuantity, std::uint16_t fillPrice) {
-        auto leftToFill{fillQuantity};
-        while (leftToFill > 0 && getTotalQuantity() > 0) {
+    void OrderQueue::fill(const std::shared_ptr<Order>& order) {
+        const auto price{order->price};
+        while (order->leftoverQuantitiy() > 0 && getTotalQuantity() > 0) {
             auto& currentOrder{orderQueue.front()};
-            const auto filled{currentOrder->fill(leftToFill, fillPrice)};
-            leftToFill -= filled;
+
+            const auto filled{currentOrder->fill(order->leftoverQuantitiy(), price)};
+            order->fill(filled, price);
+
             totalQuantity -= filled;
 
             if (currentOrder->leftoverQuantitiy() == 0) {
                 orderQueue.pop_front();
             }
         }
-
-        return fillQuantity - leftToFill;
     }
 }

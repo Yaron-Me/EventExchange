@@ -20,8 +20,5 @@ namespace exchange {
         private:
             Share yes;
             Share no;
-
-            void addBuyOrder(std::shared_ptr<Order> order);
-            void addSellOrder(std::shared_ptr<Order> order);
     };
 }

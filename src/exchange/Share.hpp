@@ -2,6 +2,7 @@
 
 #include <boost/uuid.hpp>
 #include <map>
+#include <array>
 
 #include "orderqueue.hpp"
 #include "order.hpp"
@@ -14,9 +15,16 @@ namespace exchange {
             Share(const boost::uuids::uuid& _id);
 
             void addOrder(std::shared_ptr<Order> order);
+            void cancelOrder(std::shared_ptr<Order> order);
+
+            std::vector<std::pair<std::uint16_t, std::uint64_t>> getBuyPricesAndQuantities() const;
+            std::vector<std::pair<std::uint16_t, std::uint64_t>> getSellPricesAndQuantities() const;
 
         private:
-            std::map<int, OrderQueue> buyOrders;
-            std::map<int, OrderQueue> sellOrders;
+            std::array<std::unique_ptr<OrderQueue>, MAX_DENOMINATIONS> buyOrders;
+            std::array<std::unique_ptr<OrderQueue>, MAX_DENOMINATIONS> sellOrders;
+
+            std::uint64_t buyOrderQuantity{0};
+            std::uint64_t sellOrderQuantity{0};
     };
 }

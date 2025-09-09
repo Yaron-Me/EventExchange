@@ -1,4 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
+#include <print>
 
 #include "../src/exchange/orderqueue.hpp"
 
@@ -12,7 +13,7 @@ using namespace utility;
 using namespace exchange;
 using namespace database;
 
-TEST_CASE("Order Queue") {
+TEST_CASE("OrderQueue") {
     deleteDatabase();
     initializeDatabase();
 
@@ -40,32 +41,37 @@ TEST_CASE("Order Queue") {
     REQUIRE(orderQueue.getTotalQuantity() == 600);
 
     {
-        const auto filled = orderQueue.fill(250, 50);
-        REQUIRE(filled == 250);
+        auto order = std::make_shared<Order>(userId, OrderType::SELL, OrderMode::MARKET,
+                                         eventData.id, eventData.yesShare.id, 250, 50);
+
+        orderQueue.fill(order);
+        
+        REQUIRE(order->leftoverQuantitiy() == 0);
         REQUIRE(orderQueue.getTotalQuantity() == 350);
         REQUIRE(order1->leftoverQuantitiy() == 0);
         REQUIRE(order2->leftoverQuantitiy() == 50);
         REQUIRE(order3->leftoverQuantitiy() == 300);
-
         REQUIRE(orderQueue.getOrderCount() == 2);
     }
 
     {
-        const auto filled = orderQueue.fill(200, 50);
-        REQUIRE(filled == 200);
-        REQUIRE(orderQueue.getTotalQuantity() == 150);
-        REQUIRE(order1->leftoverQuantitiy() == 0);
-        REQUIRE(order2->leftoverQuantitiy() == 0);
-        REQUIRE(order3->leftoverQuantitiy() == 150);
+        orderQueue.cancelOrder(order2);
+
+        REQUIRE(orderQueue.getTotalQuantity() == 300);
+        REQUIRE(order2->leftoverQuantitiy() == 50);
+        REQUIRE(order3->leftoverQuantitiy() == 300);
         REQUIRE(orderQueue.getOrderCount() == 1);
     }
-    
+
     {
-        orderQueue.cancelOrder(order3);
+        auto order = std::make_shared<Order>(userId, OrderType::SELL, OrderMode::MARKET,
+                                         eventData.id, eventData.yesShare.id, 500, 50);
+
+        orderQueue.fill(order);
+
+        REQUIRE(order->leftoverQuantitiy() == 200);
         REQUIRE(orderQueue.getTotalQuantity() == 0);
-        REQUIRE(order1->leftoverQuantitiy() == 0);
-        REQUIRE(order2->leftoverQuantitiy() == 0);
-        REQUIRE(order3->leftoverQuantitiy() == 150);
+        REQUIRE(order3->leftoverQuantitiy() == 0);
         REQUIRE(orderQueue.getOrderCount() == 0);
     }
 }
