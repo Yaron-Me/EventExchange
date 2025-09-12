@@ -39,8 +39,7 @@ namespace exchange {
             }
         }
         else if (type == OrderType::SELL) {
-            const auto userHoldings{database::getUserHoldings(userId)};
-            const auto ownedShares{userHoldings.contains(shareId) ? userHoldings.at(shareId) : 0};
+            const auto ownedShares{database::getUserShareHoldings(userId, shareId)};
             const auto SellOrderShareCounts{user.getSellOrderShareCounts()};
             const auto sellShareCount{SellOrderShareCounts.contains(shareId) ? SellOrderShareCounts.at(shareId) : 0};
             if (ownedShares - sellShareCount < quantity) {

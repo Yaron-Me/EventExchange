@@ -53,6 +53,26 @@ namespace database {
         return 0;
     }
 
+    std::uint32_t getUserShareHoldings(const boost::uuids::uuid& userId, const boost::uuids::uuid& shareId) {
+        try {
+            SQLite::Database db{getDatabasePath(), SQLite::OPEN_READONLY};
+            db.exec("PRAGMA foreign_keys = ON;");
+
+            SQLite::Statement query{db, "SELECT quantity FROM user_holdings WHERE user_id = ? AND share_id = ?"};
+            query.bind(1, utility::uuidToString(userId));
+            query.bind(2, utility::uuidToString(shareId));
+
+            if (query.executeStep()) {
+                return query.getColumn(0).getUInt();
+            }
+        }
+        catch (const std::exception& e) {
+            std::print(std::cerr, "Error fetching user share holdings: {}\n", e.what());
+        }
+
+        return 0;
+    }
+
     std::map<boost::uuids::uuid, std::uint32_t> getUserHoldings(const boost::uuids::uuid& userId) {
         std::map<boost::uuids::uuid, std::uint32_t> holdings;
         try {

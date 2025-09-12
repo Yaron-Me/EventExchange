@@ -18,6 +18,7 @@ namespace database {
     std::int64_t getUserBalance(const boost::uuids::uuid& userId);
     void updateUserBalance(const boost::uuids::uuid& userId, std::int64_t amount);
 
+    std::uint32_t getUserShareHoldings(const boost::uuids::uuid& userId, const boost::uuids::uuid& shareId);
     std::map<boost::uuids::uuid, std::uint32_t> getUserHoldings(const boost::uuids::uuid& userId);
     void updateUserHoldings(const boost::uuids::uuid& userId, const boost::uuids::uuid& shareId, std::int64_t amount);
 
