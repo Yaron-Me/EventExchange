@@ -4,21 +4,31 @@
 #include "order.hpp"
 
 namespace exchange {
-    std::int64_t User::getTiedUpBalance() const {
+    std::int64_t User::getTiedUpBalance() {
         std::int64_t totalValue{0};
-        for (const auto& order : orders) {
-            totalValue += order->positionValue();
-        }
+        std::erase_if(orders, [&totalValue](const std::weak_ptr<Order>& wp) {
+            if (auto order = wp.lock()) {
+                if (order->type == OrderType::BUY) {
+                    totalValue += order->positionValue();
+                }
+                return false;
+            }
+            return true;
+        });
         return totalValue;
     }
 
-    std::map<boost::uuids::uuid, std::uint32_t> User::getSellOrderShareCounts() const {
+    std::map<boost::uuids::uuid, std::uint32_t> User::getSellOrderShareCounts() {
         std::map<boost::uuids::uuid, std::uint32_t> shares;
-        for (const auto& order : orders) {
-            if (order->type == OrderType::SELL) {
-                shares[order->shareId] += order->leftoverQuantitiy();
+        std::erase_if(orders, [&shares](const std::weak_ptr<Order>& wp) {
+            if (auto order = wp.lock()) {
+                if (order->type == OrderType::SELL) {
+                    shares[order->shareId] += order->leftoverQuantitiy();
+                }
+                return false;
             }
-        }
+            return true;
+        });
         return shares;
     }
 
@@ -26,7 +36,7 @@ namespace exchange {
         return orders.size();
     }
 
-    void User::addOrder(std::shared_ptr<Order> order) {
+    void User::addOrder(std::weak_ptr<Order> order) {
         orders.push_back(order);
     }
 }

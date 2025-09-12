@@ -51,7 +51,7 @@ namespace exchange {
 
         auto order{std::make_shared<Order>(userId, type, mode, eventId, shareId, quantity, price)};
         if (addOrder(order)) {
-            user.addOrder(order);
+            user.addOrder(std::weak_ptr<Order>(order));
         }
         else {
             cleanupUser(userId);

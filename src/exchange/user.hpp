@@ -13,12 +13,12 @@ namespace exchange {
 namespace exchange {
     class User {
         public:
-            std::int64_t getTiedUpBalance() const;
-            std::map<boost::uuids::uuid, std::uint32_t> getSellOrderShareCounts() const;
+            std::int64_t getTiedUpBalance();
+            std::map<boost::uuids::uuid, std::uint32_t> getSellOrderShareCounts();
+            void addOrder(std::weak_ptr<Order> order);
             std::size_t getOrderCount() const;
-            void addOrder(std::shared_ptr<Order> order);
 
         private:
-            std::vector<std::shared_ptr<Order>> orders;
+            std::vector<std::weak_ptr<Order>> orders;
     };
 }
