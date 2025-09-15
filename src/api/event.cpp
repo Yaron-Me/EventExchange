@@ -4,7 +4,7 @@
 #include "utility.hpp"
 
 namespace api {
-    void setupEventApi(crow::SimpleApp& app, exchange::Exchange& exchange) {
+    void setupEventApi(crow::SimpleApp& app, engine::Exchange& exchange) {
         // Create event route
         CROW_ROUTE(app, "/api/events").methods("POST"_method)
         ([&exchange](const crow::request& req) {

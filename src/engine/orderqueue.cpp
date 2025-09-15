@@ -1,7 +1,7 @@
 #include "orderqueue.hpp"
 #include "order.hpp"
 
-namespace exchange {
+namespace engine {
     void OrderQueue::addOrder(const std::shared_ptr<Order>& order) {
         orderQueue.push_back(order);
         totalQuantity += order->leftoverQuantitiy();

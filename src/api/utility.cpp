@@ -1,24 +1,24 @@
 #include "utility.hpp"
 
 namespace api {
-    exchange::OrderType stringToOrderType(const std::string& typeStr) {
+    engine::OrderType stringToOrderType(const std::string& typeStr) {
         if (typeStr == "BUY") {
-            return exchange::OrderType::BUY;
+            return engine::OrderType::BUY;
         }
         else if (typeStr == "SELL") {
-            return exchange::OrderType::SELL;
+            return engine::OrderType::SELL;
         }
         else {
             throw std::invalid_argument("Invalid order type: " + typeStr);
         }
     }
 
-    exchange::OrderMode stringToOrderMode(const std::string& modeStr) {
+    engine::OrderMode stringToOrderMode(const std::string& modeStr) {
         if (modeStr == "MARKET") {
-            return exchange::OrderMode::MARKET;
+            return engine::OrderMode::MARKET;
         }
         else if (modeStr == "LIMIT") {
-            return exchange::OrderMode::LIMIT;
+            return engine::OrderMode::LIMIT;
         }
         else {
             throw std::invalid_argument("Invalid order mode: " + modeStr);

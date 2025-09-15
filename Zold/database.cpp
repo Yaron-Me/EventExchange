@@ -40,10 +40,10 @@ void removeFunds(const std::string& userId, int amount) {
     (void)amount;
 }
 
-void uploadFinishedOrder(const exchange::Order* order) {
+void uploadFinishedOrder(const engine::Order* order) {
     // Placeholder for uploading the order to the database
     // In a real implementation, this would update the order status in db
-    std::string buysell = (order->type == exchange::OrderType::BUY) ? "bought" : "sold";
+    std::string buysell = (order->type == engine::OrderType::BUY) ? "bought" : "sold";
 
     if (order->isFilled()) {
         std::cout << "Order of user " << order->userId << " has been filled with " <<

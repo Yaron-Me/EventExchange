@@ -8,15 +8,15 @@
 #include <iostream>
 
 #include "../utility/uuid.hpp"
-#include "../exchange/user.hpp"
+#include "../engine/user.hpp"
 
 // Forward declarations to avoid circular dependencies
-namespace exchange {
+namespace engine {
     class OrderQueue;
     class User;
 }
 
-namespace exchange {
+namespace engine {
     static const std::uint16_t MAX_DENOMINATIONS{100};
 
     enum class OrderType {
@@ -61,34 +61,34 @@ namespace exchange {
 }
 
 template<>
-struct std::formatter<exchange::OrderType> {
+struct std::formatter<engine::OrderType> {
     constexpr auto parse(std::format_parse_context& ctx) {
         return ctx.begin();
     }
     
     template<typename FormatContext>
-    auto format(const exchange::OrderType& type, FormatContext& ctx) {
+    auto format(const engine::OrderType& type, FormatContext& ctx) {
         switch (type) {
-            case exchange::OrderType::BUY:
+            case engine::OrderType::BUY:
                 return std::format_to(ctx.out(), "BUY");
-            case exchange::OrderType::SELL:
+            case engine::OrderType::SELL:
                 return std::format_to(ctx.out(), "SELL");
         }
     }
 };
 
 template<>
-struct std::formatter<exchange::OrderMode> {
+struct std::formatter<engine::OrderMode> {
     constexpr auto parse(std::format_parse_context& ctx) {
         return ctx.begin();
     }
 
     template<typename FormatContext>
-    auto format(const exchange::OrderMode& mode, FormatContext& ctx) {
+    auto format(const engine::OrderMode& mode, FormatContext& ctx) {
         switch (mode) {
-            case exchange::OrderMode::MARKET:
+            case engine::OrderMode::MARKET:
                 return std::format_to(ctx.out(), "MARKET");
-            case exchange::OrderMode::LIMIT:
+            case engine::OrderMode::LIMIT:
                 return std::format_to(ctx.out(), "LIMIT");
         }
     }

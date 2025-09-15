@@ -4,11 +4,11 @@
 #include <deque>
 
 // Forward declaration to avoid circular dependencies
-namespace exchange {
+namespace engine {
     class Order;
 }
 
-namespace exchange {
+namespace engine {
     class OrderQueue {
         public:
             void addOrder(const std::shared_ptr<Order>& order);

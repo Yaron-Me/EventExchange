@@ -4,7 +4,7 @@
 
 #include "share.hpp"
 
-namespace exchange {
+namespace engine {
     Share::Share(const boost::uuids::uuid& _id) : id{_id} {}
 
     void Share::addOrder(std::shared_ptr<Order> order) {

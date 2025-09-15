@@ -7,7 +7,7 @@
 #include "orderqueue.hpp"
 #include "order.hpp"
 
-namespace exchange {
+namespace engine {
     class Share {
         public:
             const boost::uuids::uuid id;

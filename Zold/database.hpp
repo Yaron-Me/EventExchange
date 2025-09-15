@@ -20,6 +20,6 @@ void removeShares(const std::string& userId, const std::string& stockName,
 void removeFunds(const std::string& userId, int amount);
 
 // Upload a completed order to the database
-void uploadFinishedOrder(const exchange::Order* order);
+void uploadFinishedOrder(const engine::Order* order);
 
 } // namespace database

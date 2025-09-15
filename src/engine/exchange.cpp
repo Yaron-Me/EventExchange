@@ -5,7 +5,7 @@
 #include "../database/exchange.hpp"
 #include "../database/user.hpp"
 
-namespace exchange {
+namespace engine {
     bool Exchange::createEvent(const boost::uuids::uuid& eventId,
                                const boost::uuids::uuid& yesId,
                                const boost::uuids::uuid& noId) {

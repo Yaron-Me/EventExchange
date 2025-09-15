@@ -3,7 +3,7 @@
 #include "user.hpp"
 #include "order.hpp"
 
-namespace exchange {
+namespace engine {
     std::int64_t User::getTiedUpBalance() {
         std::int64_t totalValue{0};
         std::erase_if(orders, [&totalValue](const std::weak_ptr<Order>& wp) {

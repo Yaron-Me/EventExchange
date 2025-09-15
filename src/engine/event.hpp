@@ -6,7 +6,7 @@
 #include "share.hpp"
 #include "order.hpp"
 
-namespace exchange {
+namespace engine {
     class Event {
         public:
             const boost::uuids::uuid id;

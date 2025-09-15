@@ -6,7 +6,7 @@
 #include "order.hpp"
 
 namespace api {
-    void setupApi(crow::SimpleApp& app, exchange::Exchange& exchange) {
+    void setupApi(crow::SimpleApp& app, engine::Exchange& exchange) {
         setupUserApi(app);
         setupEventApi(app, exchange);
         setupOrderApi(app, exchange);

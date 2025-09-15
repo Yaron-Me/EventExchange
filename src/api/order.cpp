@@ -3,13 +3,13 @@
 #include <iostream>
 
 #include "order.hpp"
-#include "../exchange/exchange.hpp"
+#include "../engine/exchange.hpp"
 #include "../utility/uuid.hpp"
-#include "../exchange/order.hpp"
+#include "../engine/order.hpp"
 #include "utility.hpp"
 
 namespace api {
-    void setupOrderApi(crow::SimpleApp& app, exchange::Exchange& exchange) {
+    void setupOrderApi(crow::SimpleApp& app, engine::Exchange& exchange) {
         CROW_ROUTE(app, "/api/orders").methods("POST"_method)
         ([&exchange](const crow::request& req) {
             auto body{crow::json::load(req.body)};
@@ -37,13 +37,13 @@ namespace api {
 
                 if (body["quantity"].u() > std::numeric_limits<std::uint32_t>::max() ||
                     body["quantity"].u() <= 0 ||
-                    body["price"].u() > exchange::MAX_DENOMINATIONS ||
+                    body["price"].u() > engine::MAX_DENOMINATIONS ||
                     body["price"].u() <= 0) {
                     return crow::response{400, "Quantity or price exceeds limits"};
                 }
 
                 const std::uint32_t quantity{static_cast<std::uint32_t>(body["quantity"].u())};
-                const std::uint16_t price{static_cast<std::uint16_t>((mode == exchange::OrderMode::LIMIT ? body["price"].u() : 100))};
+                const std::uint16_t price{static_cast<std::uint16_t>((mode == engine::OrderMode::LIMIT ? body["price"].u() : 100))};
 
                 auto [success, message]{exchange.createOrder(userId, eventId, shareId, type, mode, quantity, price)};
                 if (success) {

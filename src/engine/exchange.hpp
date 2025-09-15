@@ -6,7 +6,7 @@
 #include "event.hpp"
 #include "user.hpp"
 
-namespace exchange {
+namespace engine {
     class Exchange {
         public:
             bool createEvent(const boost::uuids::uuid& eventId,

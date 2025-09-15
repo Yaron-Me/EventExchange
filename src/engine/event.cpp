@@ -2,7 +2,7 @@
 
 #include "event.hpp"
 
-namespace exchange {
+namespace engine {
     Event::Event(const boost::uuids::uuid& _id,
                  const boost::uuids::uuid& _yesId,
                  const boost::uuids::uuid& _noId) :

@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../exchange/order.hpp"
+#include "../engine/order.hpp"
 
 #include <vector>
 #include <string>
 #include <crow.h>
 
 namespace api {
-    exchange::OrderType stringToOrderType(const std::string& typeStr);
-    exchange::OrderMode stringToOrderMode(const std::string& modeStr);
+    engine::OrderType stringToOrderType(const std::string& typeStr);
+    engine::OrderMode stringToOrderMode(const std::string& modeStr);
     bool bodyContainsRequiredFields(const crow::json::rvalue& body, const std::vector<std::string>& requiredFields);
 }

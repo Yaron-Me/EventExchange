@@ -3,15 +3,15 @@
 #include "exchange.hpp"
 
 int main() {
-    exchange::Exchange exchange;
+    engine::Exchange exchange;
 
     // Create a stock with shares
     exchange.createStock("TechCorp", {"TechShare1", "TechShare2", "TechShare3"});
 
     // create an order
-    exchange.createOrder("User1", exchange::OrderType::BUY, "TechCorp", "TechShare1", 9, 49);
-    exchange.createOrder("User2", exchange::OrderType::BUY, "TechCorp", "TechShare2", 10, 50);
-    exchange.createOrder("User3", exchange::OrderType::BUY, "TechCorp", "TechShare3", 10, 10);
+    exchange.createOrder("User1", engine::OrderType::BUY, "TechCorp", "TechShare1", 9, 49);
+    exchange.createOrder("User2", engine::OrderType::BUY, "TechCorp", "TechShare2", 10, 50);
+    exchange.createOrder("User3", engine::OrderType::BUY, "TechCorp", "TechShare3", 10, 10);
 
     auto totalOrders {exchange.totalOrders()};
 
@@ -22,7 +22,7 @@ int main() {
 
 void stressTest() { 
     // Create an order
-    exchange::Exchange exchange;
+    engine::Exchange exchange;
 
     int STOCKS = 10;
     int SHARES = 3;
@@ -50,7 +50,7 @@ void stressTest() {
                     std::string shareName = "Share" + std::to_string(k);
                     int amount = AMOUNT;
                     int price = l + 1;
-                    exchange.createOrder(userId, exchange::OrderType::BUY, stockName, shareName, amount, price);
+                    exchange.createOrder(userId, engine::OrderType::BUY, stockName, shareName, amount, price);
                 }
             }
         }
@@ -68,7 +68,7 @@ void stressTest() {
                     std::string shareName = "Share" + std::to_string(k);
                     int amount = AMOUNT;
                     int price = ORDERS - l;
-                    exchange.createOrder(userId, exchange::OrderType::SELL, stockName, shareName, amount, price);
+                    exchange.createOrder(userId, engine::OrderType::SELL, stockName, shareName, amount, price);
                 }
             }
         }

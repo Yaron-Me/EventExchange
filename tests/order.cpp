@@ -1,6 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include "../src/exchange/order.hpp"
+#include "../src/engine/order.hpp"
 
 #include "../src/utility/uuid.hpp"
 
@@ -9,7 +9,7 @@
 #include "../src/database/exchange.hpp"
 
 using namespace utility;
-using namespace exchange;
+using namespace engine;
 using namespace database;
 
 TEST_CASE("Buy Order") {

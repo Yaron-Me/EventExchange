@@ -2,7 +2,7 @@
 #include "../utility/uuid.hpp"
 #include "../database/user.hpp"
 
-namespace exchange {
+namespace engine {
     Order::Order(const boost::uuids::uuid& _userId, const OrderType _type, const OrderMode _mode,
                  const boost::uuids::uuid& _eventId, const boost::uuids::uuid& _shareId,
                  const std::uint64_t _quantity, const std::uint16_t _price) :
