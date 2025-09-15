@@ -20,6 +20,7 @@ namespace database {
 
     void initializeDatabase() {
         try {
+            // Don't use static connection for initialization
             SQLite::Database db{getDatabasePath(), SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE};
 
             // Enable foreign key constraints
@@ -46,9 +47,26 @@ namespace database {
     void deleteDatabase() {
         try {
             std::remove(getDatabasePath().c_str());
+            // Reset static connection after deleting database
+            getDatabaseInstance().reset();
         }
         catch (const std::exception& e) {
             std::print(std::cerr, "Exception: {}", e.what());
         }
+    }
+
+    std::unique_ptr<SQLite::Database>& getDatabaseInstance() {
+        static std::unique_ptr<SQLite::Database> db;
+        return db;
+    }
+
+    SQLite::Database& getDatabase() {
+        auto& db = getDatabaseInstance();
+        
+        if (!db) {
+            db = std::make_unique<SQLite::Database>(getDatabasePath(), SQLite::OPEN_READWRITE);
+            db->exec("PRAGMA foreign_keys = ON;");
+        }
+        return *db;
     }
 }

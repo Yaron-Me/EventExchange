@@ -20,8 +20,7 @@ namespace database {
         const std::string noShareIdStr{utility::uuidToString(noShareId)};
 
         try {
-            SQLite::Database db{getDatabasePath(), SQLite::OPEN_READWRITE};
-            db.exec("PRAGMA foreign_keys = ON;");
+            auto& db = getDatabase();
             
             SQLite::Transaction transaction{db};
             
@@ -67,7 +66,7 @@ namespace database {
         std::map<std::string, EventData> eventsMap;
 
         try {
-            SQLite::Database db{getDatabasePath(), SQLite::OPEN_READONLY};
+            auto& db = getDatabase();
 
             std::print("{}", getDatabasePath());
 

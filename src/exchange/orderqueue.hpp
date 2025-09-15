@@ -15,7 +15,7 @@ namespace exchange {
             void cancelOrder(const std::shared_ptr<Order>& order);
             std::uint64_t getTotalQuantity() const;
             std::size_t getOrderCount() const;
-            void fill(const std::shared_ptr<Order>& order);
+            std::uint64_t fillOrder(const std::shared_ptr<Order>& order);
 
         private:
             std::deque<std::shared_ptr<Order>> orderQueue;

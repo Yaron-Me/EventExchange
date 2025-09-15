@@ -12,8 +12,7 @@ namespace database {
         const auto userIdStr{utility::uuidToString(userId)};
 
         try {
-            SQLite::Database db{getDatabasePath(), SQLite::OPEN_READWRITE};
-            db.exec("PRAGMA foreign_keys = ON;");
+            auto& db = getDatabase();
             
             SQLite::Statement query{db, "INSERT INTO users (id, name, password, balance) VALUES (?, ?, ?, ?)"};
             query.bind(1, userIdStr);
@@ -36,8 +35,7 @@ namespace database {
 
     std::int64_t getUserBalance(const boost::uuids::uuid& userId) {
         try {
-            SQLite::Database db{getDatabasePath(), SQLite::OPEN_READONLY};
-            db.exec("PRAGMA foreign_keys = ON;");
+            auto& db = getDatabase();
 
             SQLite::Statement query{db, "SELECT balance FROM users WHERE id = ?"};
             query.bind(1, utility::uuidToString(userId));
@@ -55,8 +53,7 @@ namespace database {
 
     std::uint32_t getUserShareHoldings(const boost::uuids::uuid& userId, const boost::uuids::uuid& shareId) {
         try {
-            SQLite::Database db{getDatabasePath(), SQLite::OPEN_READONLY};
-            db.exec("PRAGMA foreign_keys = ON;");
+            auto& db = getDatabase();
 
             SQLite::Statement query{db, "SELECT quantity FROM user_holdings WHERE user_id = ? AND share_id = ?"};
             query.bind(1, utility::uuidToString(userId));
@@ -76,8 +73,7 @@ namespace database {
     std::map<boost::uuids::uuid, std::uint32_t> getUserHoldings(const boost::uuids::uuid& userId) {
         std::map<boost::uuids::uuid, std::uint32_t> holdings;
         try {
-            SQLite::Database db{getDatabasePath(), SQLite::OPEN_READONLY};
-            db.exec("PRAGMA foreign_keys = ON;");
+            auto& db = getDatabase();
 
             SQLite::Statement query{db, "SELECT share_id, quantity FROM user_holdings WHERE user_id = ?"};
             query.bind(1, utility::uuidToString(userId));
@@ -96,8 +92,7 @@ namespace database {
 
     void updateUserBalance(const boost::uuids::uuid& userId, std::int64_t amount) {
         try {
-            SQLite::Database db{getDatabasePath(), SQLite::OPEN_READWRITE};
-            db.exec("PRAGMA foreign_keys = ON;");
+            auto& db = getDatabase();
 
             SQLite::Statement query{db, "UPDATE users SET balance = balance + ? WHERE id = ?"};
             query.bind(1, amount);
@@ -114,8 +109,7 @@ namespace database {
 
     void updateUserHoldings(const boost::uuids::uuid& userId, const boost::uuids::uuid& shareId, std::int64_t amount) {
         try {
-            SQLite::Database db{getDatabasePath(), SQLite::OPEN_READWRITE};
-            db.exec("PRAGMA foreign_keys = ON;");
+            auto& db = getDatabase();
 
             SQLite::Statement query{db, R"(
                 INSERT INTO user_holdings (user_id, share_id, quantity)
@@ -149,8 +143,7 @@ namespace database {
         const auto transactionId = utility::generateUUID();
         
         try {
-            SQLite::Database db{getDatabasePath(), SQLite::OPEN_READWRITE};
-            db.exec("PRAGMA foreign_keys = ON;");
+            auto& db = getDatabase();
 
             SQLite::Statement query{db, "INSERT INTO transactions (id, user_id, share_id, quantity, price) VALUES (?, ?, ?, ?, ?)"};
             query.bind(1, utility::uuidToString(transactionId));
@@ -172,8 +165,7 @@ namespace database {
         std::vector<TransactionData> transactions;
         
         try {
-            SQLite::Database db{getDatabasePath(), SQLite::OPEN_READONLY};
-            db.exec("PRAGMA foreign_keys = ON;");
+            auto& db = getDatabase();
 
             SQLite::Statement query{db, R"(
                 SELECT id, user_id, share_id, quantity, price, timestamp 

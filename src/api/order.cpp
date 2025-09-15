@@ -43,7 +43,7 @@ namespace api {
                 }
 
                 const std::uint32_t quantity{static_cast<std::uint32_t>(body["quantity"].u())};
-                const std::uint16_t price{static_cast<std::uint16_t>(body["price"].u())};
+                const std::uint16_t price{static_cast<std::uint16_t>((mode == exchange::OrderMode::LIMIT ? body["price"].u() : 100))};
 
                 auto [success, message]{exchange.createOrder(userId, eventId, shareId, type, mode, quantity, price)};
                 if (success) {

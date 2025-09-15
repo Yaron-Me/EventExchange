@@ -15,7 +15,11 @@ namespace exchange {
             Share(const boost::uuids::uuid& _id);
 
             void addOrder(std::shared_ptr<Order> order);
+            std::uint64_t fillOrder(std::shared_ptr<Order> order);
             void cancelOrder(std::shared_ptr<Order> order);
+
+            std::uint64_t getBuyOrderQuantity() const;
+            std::uint64_t getSellOrderQuantity() const;
 
             std::vector<std::pair<std::uint16_t, std::uint64_t>> getBuyPricesAndQuantities() const;
             std::vector<std::pair<std::uint16_t, std::uint64_t>> getSellPricesAndQuantities() const;
