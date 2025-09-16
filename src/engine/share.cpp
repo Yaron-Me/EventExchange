@@ -82,21 +82,39 @@ namespace engine {
         }
     }
 
-    std::vector<std::pair<std::uint16_t, std::uint64_t>> Share::getBuyPricesAndQuantities() const {
+    std::vector<std::pair<std::uint16_t, std::uint64_t>> Share::getBuyPricesAndQuantities(std::uint64_t quantityLimit) const {
         std::vector<std::pair<std::uint16_t, std::uint64_t>> pricesAndQuantities;
+        std::uint64_t totalQuantity{0};
+        
         for (std::uint16_t price{MAX_DENOMINATIONS}; price >= 1; --price) {
             if (buyOrders[price - 1]) {
-                pricesAndQuantities.emplace_back(price, buyOrders[price - 1]->getTotalQuantity());
+                const auto quantity = buyOrders[price - 1]->getTotalQuantity();
+                pricesAndQuantities.emplace_back(price, quantity);
+                totalQuantity += quantity;
+                
+                // Early return if we have enough quantity and a limit is set
+                if (quantityLimit > 0 && totalQuantity >= quantityLimit) {
+                    break;
+                }
             }
         }
         return pricesAndQuantities;
     }
 
-    std::vector<std::pair<std::uint16_t, std::uint64_t>> Share::getSellPricesAndQuantities() const {
+    std::vector<std::pair<std::uint16_t, std::uint64_t>> Share::getSellPricesAndQuantities(std::uint64_t quantityLimit) const {
         std::vector<std::pair<std::uint16_t, std::uint64_t>> pricesAndQuantities;
+        std::uint64_t totalQuantity{0};
+        
         for (std::uint16_t price = 1; price <= MAX_DENOMINATIONS; ++price) {
             if (sellOrders[price - 1]) {
-                pricesAndQuantities.emplace_back(price, sellOrders[price - 1]->getTotalQuantity());
+                const auto quantity = sellOrders[price - 1]->getTotalQuantity();
+                pricesAndQuantities.emplace_back(price, quantity);
+                totalQuantity += quantity;
+                
+                // Early return if we have enough quantity and a limit is set
+                if (quantityLimit > 0 && totalQuantity >= quantityLimit) {
+                    break;
+                }
             }
         }
         return pricesAndQuantities;

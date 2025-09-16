@@ -21,8 +21,8 @@ namespace engine {
             std::uint64_t getBuyOrderQuantity() const;
             std::uint64_t getSellOrderQuantity() const;
 
-            std::vector<std::pair<std::uint16_t, std::uint64_t>> getBuyPricesAndQuantities() const;
-            std::vector<std::pair<std::uint16_t, std::uint64_t>> getSellPricesAndQuantities() const;
+            std::vector<std::pair<std::uint16_t, std::uint64_t>> getBuyPricesAndQuantities(std::uint64_t quantityLimit = 0) const;
+            std::vector<std::pair<std::uint16_t, std::uint64_t>> getSellPricesAndQuantities(std::uint64_t quantityLimit = 0) const;
 
         private:
             std::array<std::unique_ptr<OrderQueue>, MAX_DENOMINATIONS> buyOrders;
