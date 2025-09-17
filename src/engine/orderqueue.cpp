@@ -24,15 +24,15 @@ namespace engine {
     }
 
     std::uint64_t OrderQueue::fillOrder(const std::shared_ptr<Order>& order) {
-
         std::uint64_t totalFilled{0};
-        while (order->leftoverQuantitiy() > 0 && getTotalQuantity() > 0) {
+        std::uint16_t queuePrice{0};
+        
+        while ((order->leftoverQuantitiy() - totalFilled) > 0 && getTotalQuantity() > 0) {
             auto& currentOrder{orderQueue.front()};
-            const auto price{currentOrder->price};
+            queuePrice = currentOrder->price; // All orders in queue have same price
 
-            const auto filled{currentOrder->fill(order->leftoverQuantitiy(), price)};
-            order->fill(filled, price);
-
+            const auto filled{currentOrder->fill(order->leftoverQuantitiy() - totalFilled, queuePrice)};
+            
             totalQuantity -= filled;
             totalFilled += filled;
 
@@ -40,6 +40,12 @@ namespace engine {
                 orderQueue.pop_front();
             }
         }
+        
+        // Fill the incoming order once with the total amount at the queue's price
+        if (totalFilled > 0) {
+            order->fill(totalFilled, queuePrice);
+        }
+        
         return totalFilled;
     }
 }

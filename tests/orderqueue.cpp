@@ -63,12 +63,10 @@ TEST_CASE("OrderQueue") {
         REQUIRE(transactions1[1].amount == 150);
         REQUIRE(transactions1[1].price == 50);
         
-        auto transactions2{getUserTransactions(userId2, 0, 2)};
-        REQUIRE(transactions2.size() == 2);
-        REQUIRE(transactions2[0].amount == -100);
+        auto transactions2{getUserTransactions(userId2, 0, 1)};
+        REQUIRE(transactions2.size() == 1);
+        REQUIRE(transactions2[0].amount == -250);
         REQUIRE(transactions2[0].price == 50);
-        REQUIRE(transactions2[1].amount == -150);
-        REQUIRE(transactions2[1].price == 50);
     }
 
     {
@@ -97,10 +95,10 @@ TEST_CASE("OrderQueue") {
         REQUIRE(transactions1[2].amount == 300);
         REQUIRE(transactions1[2].price == 50);
 
-        auto transactions2{getUserTransactions(userId2, 0, 3)};
-        REQUIRE(transactions2.size() == 3);
-        REQUIRE(transactions2[2].amount == -300);
-        REQUIRE(transactions2[2].price == 50);
+        auto transactions2{getUserTransactions(userId2, 0, 2)};
+        REQUIRE(transactions2.size() == 2);
+        REQUIRE(transactions2[1].amount == -300);
+        REQUIRE(transactions2[1].price == 50);
     }
 
     REQUIRE(getUserBalance(userId1) == 600 * 50 - 600 * 50 + 50 * 50);

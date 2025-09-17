@@ -29,6 +29,6 @@ namespace engine {
 
             void cleanupUser(const boost::uuids::uuid& userId);
 
-            bool addOrder(std::shared_ptr<Order> order);
+            bool addOrder(std::shared_ptr<Order>& order);
     };
 }

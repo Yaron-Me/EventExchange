@@ -30,9 +30,8 @@ namespace engine {
         std::uint64_t totalFilled{0};
 
         if (order->type == OrderType::BUY) {
-            for (auto [price, quantity] : getSellPricesAndQuantities()) {
-                if (order->leftoverQuantitiy() == 0 ||
-                    price > order->price) break;
+            for (auto [price, quantity] : getSellPricesAndQuantities(order->leftoverQuantitiy(), order->price)) {
+                if (order->leftoverQuantitiy() == 0) break;
 
                 const auto filled{sellOrders[price - 1]->fillOrder(order)};
                 if (sellOrders[price - 1]->getOrderCount() == 0) {
@@ -43,9 +42,8 @@ namespace engine {
             }
         }
         else if (order->type == OrderType::SELL) {
-            for (auto [price, quantity] : getBuyPricesAndQuantities()) {
-                if (order->leftoverQuantitiy() == 0 ||
-                    price < order->price) break;
+            for (auto [price, quantity] : getBuyPricesAndQuantities(order->leftoverQuantitiy(), order->price)) {
+                if (order->leftoverQuantitiy() == 0) break;
 
                 const auto filled{buyOrders[price - 1]->fillOrder(order)};
                 if (buyOrders[price - 1]->getOrderCount() == 0) {
@@ -82,14 +80,20 @@ namespace engine {
         }
     }
 
-    std::vector<std::pair<std::uint16_t, std::uint64_t>> Share::getBuyPricesAndQuantities(std::uint64_t quantityLimit) const {
+    std::vector<std::pair<std::uint16_t, std::uint64_t>> Share::getBuyPricesAndQuantities(std::uint64_t quantityLimit, std::uint16_t priceLimit, bool inverted) const {
         std::vector<std::pair<std::uint16_t, std::uint64_t>> pricesAndQuantities;
         std::uint64_t totalQuantity{0};
-        
-        for (std::uint16_t price{MAX_DENOMINATIONS}; price >= 1; --price) {
+
+        for (std::uint16_t price{MAX_DENOMINATIONS}; price >= priceLimit; --price) {
             if (buyOrders[price - 1]) {
                 const auto quantity = buyOrders[price - 1]->getTotalQuantity();
-                pricesAndQuantities.emplace_back(price, quantity);
+
+                if (inverted) {
+                    pricesAndQuantities.emplace_back(MAX_DENOMINATIONS - price, quantity);
+                }
+                else {
+                    pricesAndQuantities.emplace_back(price, quantity);
+                }
                 totalQuantity += quantity;
                 
                 // Early return if we have enough quantity and a limit is set
@@ -101,14 +105,20 @@ namespace engine {
         return pricesAndQuantities;
     }
 
-    std::vector<std::pair<std::uint16_t, std::uint64_t>> Share::getSellPricesAndQuantities(std::uint64_t quantityLimit) const {
+    std::vector<std::pair<std::uint16_t, std::uint64_t>> Share::getSellPricesAndQuantities(std::uint64_t quantityLimit, std::uint16_t priceLimit, bool inverted) const {
         std::vector<std::pair<std::uint16_t, std::uint64_t>> pricesAndQuantities;
         std::uint64_t totalQuantity{0};
         
-        for (std::uint16_t price = 1; price <= MAX_DENOMINATIONS; ++price) {
+        for (std::uint16_t price{1}; price <= priceLimit; ++price) {
             if (sellOrders[price - 1]) {
                 const auto quantity = sellOrders[price - 1]->getTotalQuantity();
-                pricesAndQuantities.emplace_back(price, quantity);
+
+                if (inverted) {
+                    pricesAndQuantities.emplace_back(MAX_DENOMINATIONS - price, quantity);
+                }
+                else {
+                    pricesAndQuantities.emplace_back(price, quantity);
+                }
                 totalQuantity += quantity;
                 
                 // Early return if we have enough quantity and a limit is set

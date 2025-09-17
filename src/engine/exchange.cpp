@@ -72,7 +72,7 @@ namespace engine {
         }
     }
 
-    bool Exchange::addOrder(std::shared_ptr<Order> order) {
+    bool Exchange::addOrder(std::shared_ptr<Order>& order) {
         try {
             auto& event{events.at(order->eventId)};
             event.addOrder(order);

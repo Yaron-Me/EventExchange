@@ -15,7 +15,7 @@ namespace engine {
                   const boost::uuids::uuid& _yesId,
                   const boost::uuids::uuid& _noId);
 
-            void addOrder(std::shared_ptr<Order> order);
+            void addOrder(std::shared_ptr<Order>& order);
 
         private:
             Share yes;

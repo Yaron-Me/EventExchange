@@ -17,7 +17,7 @@ namespace engine {
 }
 
 namespace engine {
-    static const std::uint16_t MAX_DENOMINATIONS{100};
+    static const std::uint16_t MAX_DENOMINATIONS{1000};
 
     enum class OrderType {
         BUY,
