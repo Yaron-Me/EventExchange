@@ -1,6 +1,7 @@
 #include "order.hpp"
 #include "../utility/uuid.hpp"
 #include "../database/user.hpp"
+#include "../database/event.hpp"
 
 namespace engine {
     Order::Order(const boost::uuids::uuid& _userId, const OrderType _type, const OrderMode _mode,
@@ -40,9 +41,14 @@ namespace engine {
             -static_cast<std::int64_t>(quantityToFill * fillPrice) : 
             static_cast<std::int64_t>(quantityToFill * fillPrice)};
 
-        database::createTransaction(userId, shareId, transactionQuantity, fillPrice);
-        database::updateUserHoldings(userId, shareId, transactionQuantity);
-        database::updateUserBalance(userId, transactionValue);
+        if (!userId.is_nil()) {
+            database::createTransaction(userId, shareId, transactionQuantity, fillPrice);
+            database::updateUserHoldings(userId, shareId, transactionQuantity);
+            database::updateUserBalance(userId, transactionValue);
+        }
+        else {
+            database::updateIssuedShares(eventId, -transactionQuantity);
+        }
         
         return quantityToFill;
     }

@@ -12,7 +12,7 @@
 #include "routes/routes.hpp"
 
 #include "database/utility.hpp"
-#include "database/exchange.hpp"
+#include "database/event.hpp"
 #include "database/user.hpp"
 #include "database/utility.hpp"
 

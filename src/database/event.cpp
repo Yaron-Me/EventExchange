@@ -5,7 +5,7 @@
 
 #include "../utility/uuid.hpp"
 #include "utility.hpp"
-#include "exchange.hpp"
+#include "event.hpp"
 
 namespace database {
     std::tuple<bool, EventData> createEvent(const std::string& eventName,
@@ -88,15 +88,17 @@ namespace database {
                 const auto eventIdStr{query.getColumn(0).getString()};
                 const auto eventName{query.getColumn(1).getString()};
                 const auto description{query.getColumn(2).getString()};
-                const auto createdAt{query.getColumn(3).getString()};
-                const auto shareIdStr{query.getColumn(4).getString()};
-                const auto shareName{query.getColumn(5).getString()};
-                const auto shareType{query.getColumn(6).getString()};
+                const auto issued{query.getColumn(3).getUInt()};
+                const auto createdAt{query.getColumn(4).getString()};
+                const auto shareIdStr{query.getColumn(5).getString()};
+                const auto shareName{query.getColumn(6).getString()};
+                const auto shareType{query.getColumn(7).getString()};
 
                 auto [it, inserted] = eventsMap.try_emplace(eventIdStr, EventData{
                     .id = utility::stringToUUID(eventIdStr),
                     .name = eventName,
                     .description = description,
+                    .issued = issued,
                     .createdAt = createdAt,
                     .yesShare = {},
                     .noShare = {}
@@ -119,5 +121,73 @@ namespace database {
         }
 
         return results;
+    }
+
+    const EventData getEvent(const boost::uuids::uuid& eventId) {
+        EventData eventData;
+
+        try {
+            auto& db = getDatabase();
+
+            SQLite::Statement query{db, R"(
+                SELECT
+                    e.id, e.name, e.description, e.created_at, e.issued,
+                    sh.id, sh.name, sh.type
+                FROM
+                    events e
+                JOIN
+                    shares sh ON e.id = sh.event_id
+                WHERE
+                    e.id = ?;
+            )"};
+
+            query.bind(1, utility::uuidToString(eventId));
+
+            while (query.executeStep()) {
+                const auto eventIdStr{query.getColumn(0).getString()};
+                const auto eventName{query.getColumn(1).getString()};
+                const auto description{query.getColumn(2).getString()};
+                const auto createdAt{query.getColumn(3).getString()};
+                const auto issued{query.getColumn(4).getUInt()};
+                const auto shareIdStr{query.getColumn(5).getString()};
+                const auto shareName{query.getColumn(6).getString()};
+                const auto shareType{query.getColumn(7).getString()};
+
+                eventData.id = utility::stringToUUID(eventIdStr);
+                eventData.name = eventName;
+                eventData.description = description;
+                eventData.createdAt = createdAt;
+                eventData.issued = issued;
+
+                if (shareType == "YES") {
+                    eventData.yesShare = {utility::stringToUUID(shareIdStr), shareName};
+                } else if (shareType == "NO") {
+                    eventData.noShare = {utility::stringToUUID(shareIdStr), shareName};
+                }
+            }
+        } catch (const std::exception& e) {
+            std::print(std::cerr, "Error fetching event: {}\n", e.what());
+        }
+
+        return eventData;
+    }
+
+    void updateIssuedShares(const boost::uuids::uuid& eventId, std::int64_t quantity) {
+        try {
+            auto& db = getDatabase();
+
+            SQLite::Statement query{db, R"(
+                UPDATE events
+                SET issued = issued + ?
+                WHERE id = ?;
+            )"};
+
+            query.bind(1, quantity);
+            query.bind(2, utility::uuidToString(eventId));
+
+            query.exec();
+        } catch (const std::exception& e) {
+            std::print(std::cerr, "Error updating issued shares: {}\n", e.what());
+        }
     }
 }

@@ -7,7 +7,7 @@
 
 #include "../src/database/utility.hpp"
 #include "../src/database/user.hpp"
-#include "../src/database/exchange.hpp"
+#include "../src/database/event.hpp"
 
 using namespace utility;
 using namespace engine;

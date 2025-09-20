@@ -2,6 +2,7 @@ CREATE TABLE events (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
     description TEXT,
+    issued INTEGER NOT NULL DEFAULT 0,
     settled INTEGER NOT NULL DEFAULT 0 CHECK(settled IN (0, 1)),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );

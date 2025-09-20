@@ -17,6 +17,7 @@ namespace database {
         std::string name;
         std::string description;
         std::string createdAt;
+        uint64_t issued;
         ShareData yesShare;
         ShareData noShare;
     };
@@ -25,4 +26,6 @@ namespace database {
                      const std::string& eventDescription, const std::string& yesShareName,
                      const std::string& noShareName);
     const std::vector<EventData> getEvents();
+    const EventData getEvent(const boost::uuids::uuid& eventId);
+    void updateIssuedShares(const boost::uuids::uuid& eventId, std::int64_t quantity);
 }

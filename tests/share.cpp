@@ -8,7 +8,7 @@
 
 #include "../src/database/utility.hpp"
 #include "../src/database/user.hpp"
-#include "../src/database/exchange.hpp"
+#include "../src/database/event.hpp"
 
 using namespace utility;
 using namespace engine;
@@ -37,7 +37,6 @@ TEST_CASE("Share Buy fills Sell") {
     }
 
     REQUIRE(share.getBuyOrderQuantity() == 1000);
-    
     
     REQUIRE(share.getBuyPricesAndQuantities() == std::vector<std::pair<uint16_t, uint64_t>>{
         {54, 100}, {53, 100}, {52, 100}, {51, 100}, {50, 100},
