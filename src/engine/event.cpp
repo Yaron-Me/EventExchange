@@ -54,22 +54,22 @@ namespace engine {
             uint64_t found{0};
             uint64_t synthFound{0};
 
-            size_t i = 0;
-            size_t j = 0;
+            size_t i{0};
+            size_t j{0};
             while (found < toFind) {
                 if (sellPricesAndQuantities.size() > i && matchPricesAndQuantities.size() > j) {
-                    auto [p1, q1] = sellPricesAndQuantities[i];
-                    auto [p2, q2] = matchPricesAndQuantities[j];
+                    auto [p1, q1]{sellPricesAndQuantities[i]};
+                    auto [p2, q2]{matchPricesAndQuantities[j]};
 
                     if (p1 < p2) {
                         // buy fills sell
-                        auto t = std::min(q1, toFind - found);
+                        auto t{std::min(q1, toFind - found)};
                         found += t;
                         i++;
                     }
                     else if (p2 < p1) {
                         // buy match buy
-                        auto t = std::min(q2, toFind - found);
+                        auto t{std::min(q2, toFind - found)};
                         found += t;
                         synthFound += t;
                         order->fill(t, p2);
@@ -78,13 +78,13 @@ namespace engine {
                     else {
                         if (q1 >= q2) {
                             // buy fills sell
-                            auto t = std::min(q1, toFind - found);
+                            auto t{std::min(q1, toFind - found)};
                             found += t;
                             i++;
                         }
                         else {
                             // buy match buy
-                            auto t = std::min(q2, toFind - found);
+                            auto t{std::min(q2, toFind - found)};
                             found += t;
                             synthFound += t;
                             order->fill(t, p2);
@@ -94,15 +94,15 @@ namespace engine {
                 }
                 else if (sellPricesAndQuantities.size() > i) {
                     // buy fills sell
-                    auto [p1, q1] = sellPricesAndQuantities[i];
-                    auto t = std::min(q1, toFind - found);
+                    auto [p1, q1]{sellPricesAndQuantities[i]};
+                    auto t{std::min(q1, toFind - found)};
                     found += t;
                     i++;
                 }
                 else if (matchPricesAndQuantities.size() > j) {
                     // buy match buy
-                    auto [p2, q2] = matchPricesAndQuantities[j];
-                    auto t = std::min(q2, toFind - found);
+                    auto [p2, q2]{matchPricesAndQuantities[j]};
+                    auto t{std::min(q2, toFind - found)};
                     found += t;
                     synthFound += t;
                     order->fill(t, p2);

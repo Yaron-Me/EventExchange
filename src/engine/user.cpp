@@ -7,7 +7,7 @@ namespace engine {
     std::int64_t User::getTiedUpBalance() {
         std::int64_t totalValue{0};
         std::erase_if(orders, [&totalValue](const std::weak_ptr<Order>& wp) {
-            if (auto order = wp.lock()) {
+            if (auto order{wp.lock()}) {
                 if (order->type == OrderType::BUY) {
                     totalValue += order->positionValue();
                 }
@@ -21,7 +21,7 @@ namespace engine {
     std::map<boost::uuids::uuid, std::uint32_t> User::getSellOrderShareCounts() {
         std::map<boost::uuids::uuid, std::uint32_t> shares;
         std::erase_if(orders, [&shares](const std::weak_ptr<Order>& wp) {
-            if (auto order = wp.lock()) {
+            if (auto order{wp.lock()}) {
                 if (order->type == OrderType::SELL) {
                     shares[order->shareId] += order->leftoverQuantitiy();
                 }
