@@ -44,8 +44,6 @@ TEST_CASE("Share buying and issuing new shares") {
         event.addOrder(order);
     }
 
-    event.printOrderbook();
-
     {
         auto order{std::make_shared<Order>(userId1, OrderType::BUY, OrderMode::LIMIT,
                             eventData.id, eventData.yesShare.id, 305, 500)};

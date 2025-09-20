@@ -52,6 +52,7 @@ namespace engine {
 
             uint64_t toFind{order->leftoverQuantitiy()};
             uint64_t found{0};
+            uint64_t synthFound{0};
 
             size_t i = 0;
             size_t j = 0;
@@ -70,11 +71,8 @@ namespace engine {
                         // buy match buy
                         auto t = std::min(q2, toFind - found);
                         found += t;
+                        synthFound += t;
                         order->fill(t, p2);
-                        auto syntheticOrder{std::make_shared<Order>(boost::uuids::uuid{}, OrderType::SELL, OrderMode::MARKET,
-                                                 order->eventId, otherShare.id,
-                                                 t, MAX_DENOMINATIONS - p2)};
-                        otherShare.fillOrder(syntheticOrder);
                         j++;
                     }
                     else {
@@ -88,11 +86,8 @@ namespace engine {
                             // buy match buy
                             auto t = std::min(q2, toFind - found);
                             found += t;
+                            synthFound += t;
                             order->fill(t, p2);
-                            auto syntheticOrder{std::make_shared<Order>(boost::uuids::uuid{}, OrderType::SELL, OrderMode::MARKET,
-                                                     order->eventId, otherShare.id,
-                                                     t, MAX_DENOMINATIONS - p2)};
-                            otherShare.fillOrder(syntheticOrder);
                             j++;
                         }
                     }
@@ -109,17 +104,17 @@ namespace engine {
                     auto [p2, q2] = matchPricesAndQuantities[j];
                     auto t = std::min(q2, toFind - found);
                     found += t;
+                    synthFound += t;
                     order->fill(t, p2);
-                    auto syntheticOrder{std::make_shared<Order>(boost::uuids::uuid{}, OrderType::SELL, OrderMode::MARKET,
-                                             order->eventId, otherShare.id,
-                                             t, MAX_DENOMINATIONS - p2)};
-                    otherShare.fillOrder(syntheticOrder);
                     j++;
                 }
                 else {
                     break;
                 }
             }
+            otherShare.fillOrder(std::make_shared<Order>(boost::uuids::uuid{}, OrderType::SELL, OrderMode::MARKET,
+                                             order->eventId, otherShare.id,
+                                             synthFound, MAX_DENOMINATIONS - order->price));
             thisShare.fillOrder(order);
         }
         // else if (order->type == OrderType::SELL) {
