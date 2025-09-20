@@ -29,7 +29,7 @@ target_compile_definitions(exchange_lib PUBLIC
 target_link_libraries(exchange_lib PUBLIC
     Boost::boost
     SQLiteCpp
-    SQLite::SQLite3
+    # SQLite::SQLite3
     Crow::Crow
 )
 
