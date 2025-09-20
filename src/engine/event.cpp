@@ -13,21 +13,21 @@ namespace engine {
         std::print("\033[34mYES SHARE ORDERBOOK\n");
         std::print("\033[32mBUY ORDERS:\n");
         for (auto [price, quantity] : yes.getBuyPricesAndQuantities()) {
-            std::print("Price: {}, Quantity: {}\n", price, quantity); // green for buys
+            std::print("Price: {} ({}), Quantity: {}\n", price, MAX_DENOMINATIONS - price, quantity); // green for buys
         }
         std::print("\033[31mSELL ORDERS:\n");
         for (auto [price, quantity] : yes.getSellPricesAndQuantities()) {
-            std::print("Price: {}, Quantity: {}\n", price, quantity);
+            std::print("Price: {} ({}), Quantity: {}\n", price, MAX_DENOMINATIONS - price, quantity);
         }
 
         std::print("\n\033[34mNO SHARE ORDERBOOK\n");
         std::print("\033[32mBUY ORDERS:\n");
         for (auto [price, quantity] : no.getBuyPricesAndQuantities()) {
-            std::print("Price: {}, Quantity: {}\n", price, quantity); // green for buys
+            std::print("Price: {} ({}), Quantity: {}\n", price, MAX_DENOMINATIONS - price, quantity); // green for buys
         }
         std::print("\033[31mSELL ORDERS:\n");
         for (auto [price, quantity] : no.getSellPricesAndQuantities()) {
-            std::print("Price: {}, Quantity: {}\n", price, quantity);
+            std::print("Price: {} ({}), Quantity: {}\n", price, MAX_DENOMINATIONS - price, quantity);
         }
         std::print("\033[0m");
     }
@@ -76,7 +76,7 @@ namespace engine {
                         j++;
                     }
                     else {
-                        if (q1 > q2) {
+                        if (q1 >= q2) {
                             // buy fills sell
                             auto t = std::min(q1, toFind - found);
                             found += t;

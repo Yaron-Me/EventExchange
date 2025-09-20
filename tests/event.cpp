@@ -44,34 +44,52 @@ TEST_CASE("Share buying and issuing new shares") {
         event.addOrder(order);
     }
 
-    {
+    { // test tie breaker based on quantity, picks sell
         auto order{std::make_shared<Order>(userId1, OrderType::BUY, OrderMode::LIMIT,
                             eventData.id, eventData.yesShare.id, 305, 500)};
         event.addOrder(order);
 
         REQUIRE(order->leftoverQuantitiy() == 0);
 
-        REQUIRE(event.getBuyAndSellQuantities(eventData.yesShare.id) == std::pair<uint64_t, uint64_t>{0, 800});
-        REQUIRE(event.getBuyAndSellQuantities(eventData.noShare.id) == std::pair<uint64_t, uint64_t>{895, 0});
+        REQUIRE(event.getBuyAndSellQuantities(eventData.yesShare.id) == std::pair<uint64_t, uint64_t>{0, 795});
+        REQUIRE(event.getBuyAndSellQuantities(eventData.noShare.id) == std::pair<uint64_t, uint64_t>{900, 0});
 
         REQUIRE(getUserBalance(userId1) == initialBalance - (450 + 460 + 460) * 100 - 470 * 5);
         REQUIRE(getUserShareHoldings(userId1, eventData.yesShare.id) == 1000 + 305);
 
-        REQUIRE(getUserBalance(userId2) == initialBalance + (450 + 460 - 540) * 100 - 530 * 5);
-        REQUIRE(getUserShareHoldings(userId2, eventData.yesShare.id) == 1000 - 200);
-        REQUIRE(getUserShareHoldings(userId2, eventData.noShare.id) == 1000 + 105);
+        REQUIRE(getUserBalance(userId2) == initialBalance + (450 + 460 - 540) * 100 + 470 * 5);
+        REQUIRE(getUserShareHoldings(userId2, eventData.yesShare.id) == 1000 - 205);
+        REQUIRE(getUserShareHoldings(userId2, eventData.noShare.id) == 1000 + 100);
 
-        REQUIRE(getEvent(eventData.id).issued == 105);
+        REQUIRE(getEvent(eventData.id).issued == 100);
     }
 
-    {
+    { // test tie breaker based on quantity, picks match
+        auto order{std::make_shared<Order>(userId1, OrderType::BUY, OrderMode::LIMIT,
+                            eventData.id, eventData.yesShare.id, 100, 500)};
+        event.addOrder(order);
+
+        REQUIRE(order->leftoverQuantitiy() == 0);
+
+        REQUIRE(event.getBuyAndSellQuantities(eventData.yesShare.id) == std::pair<uint64_t, uint64_t>{0, 795});
+        REQUIRE(event.getBuyAndSellQuantities(eventData.noShare.id) == std::pair<uint64_t, uint64_t>{800, 0});
+
+        REQUIRE(getUserBalance(userId1) == initialBalance - (450 + 460 + 460) * 100 - 470 * 105);
+        REQUIRE(getUserShareHoldings(userId1, eventData.yesShare.id) == 1000 + 305 + 100);
+
+        REQUIRE(getUserBalance(userId2) == initialBalance + (450 + 460 - 540 - 530) * 100 + 470 * 5);
+        REQUIRE(getUserShareHoldings(userId2, eventData.yesShare.id) == 1000 - 205);
+        REQUIRE(getUserShareHoldings(userId2, eventData.noShare.id) == 1000 + 100 + 100);
+    }
+
+    { // test large buy order that matches multiple levels and issues new shares but stops and doesn't fully fill or get added
         auto order{std::make_shared<Order>(userId1, OrderType::BUY, OrderMode::LIMIT,
                             eventData.id, eventData.yesShare.id, 10000, 500)};
         event.addOrder(order);
 
-        REQUIRE(order->leftoverQuantitiy() == 10000 - 795);
+        REQUIRE(order->leftoverQuantitiy() == 10000 - 695);
 
-        REQUIRE(event.getBuyAndSellQuantities(eventData.yesShare.id) == std::pair<uint64_t, uint64_t>{10000 - 795, 400});
+        REQUIRE(event.getBuyAndSellQuantities(eventData.yesShare.id) == std::pair<uint64_t, uint64_t>{10000 - 695, 400});
         REQUIRE(event.getBuyAndSellQuantities(eventData.noShare.id) == std::pair<uint64_t, uint64_t>{500, 0});
 
         REQUIRE(getUserBalance(userId1) == initialBalance - (450 + 460 + 460 + 470 + 470 + 480 + 480 + 490 + 490 + 500 + 500) * 100);
@@ -87,7 +105,7 @@ TEST_CASE("Share buying and issuing new shares") {
         REQUIRE(event.getBuyAndSellQuantities(eventData.yesShare.id) == std::pair<uint64_t, uint64_t>{0, 400});
     }
 
-    {
+    { // test market order that matches multiple levels and issues new shares but stops and doesn't fully fill or get added 
         auto order{std::make_shared<Order>(userId1, OrderType::BUY, OrderMode::MARKET,
                             eventData.id, eventData.yesShare.id, 1000, 550)};
         event.addOrder(order);
