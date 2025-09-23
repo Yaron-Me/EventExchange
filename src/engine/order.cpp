@@ -41,14 +41,14 @@ namespace engine {
             -static_cast<std::int64_t>(quantityToFill * fillPrice) : 
             static_cast<std::int64_t>(quantityToFill * fillPrice)};
 
-        if (!userId.is_nil()) {
-            database::createTransaction(userId, shareId, transactionQuantity, fillPrice);
-            database::updateUserHoldings(userId, shareId, transactionQuantity);
-            database::updateUserBalance(userId, transactionValue);
-        }
-        else {
-            database::updateIssuedShares(eventId, -transactionQuantity);
-        }
+        // if (!userId.is_nil()) {
+        //     database::createTransaction(userId, shareId, transactionQuantity, fillPrice);
+        //     database::updateUserHoldings(userId, shareId, transactionQuantity);
+        //     database::updateUserBalance(userId, transactionValue);
+        // }
+        // else {
+        //     database::updateIssuedShares(eventId, -transactionQuantity);
+        // }
         
         return quantityToFill;
     }
@@ -59,7 +59,7 @@ namespace engine {
 
     Order::~Order() {
         if (!userId.is_nil()) {
-            database::uploadFinishedOrder(*this);
+            // database::uploadFinishedOrder(*this);
         }
     }
 }

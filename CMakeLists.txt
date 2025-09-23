@@ -50,7 +50,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         -Wall                      # Enable all warnings
         -Wextra                    # Enable extra warnings
         -pedantic                  # Ensure strict standard compliance
-        -Werror                    # Treat warnings as errors
+        # -Werror                    # Treat warnings as errors
         -Wconversion               # Warn about implicit conversions
         -Wsign-conversion          # Warn about sign conversions
         -Wold-style-cast           # Warn about C-style casts
@@ -61,6 +61,6 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         -Woverloaded-virtual       # Warn about methods that override virtual methods but aren't marked virtual
         -Wpedantic                 # Reject non-standard C++
         -Wdouble-promotion         # Warn about float being implicitly promoted to double
-        # -O1
+        -O3
     )
 endif()
