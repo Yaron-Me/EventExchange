@@ -62,10 +62,10 @@ namespace engine {
             uint64_t found{0};
             uint64_t synthFound{0};
 
-            auto sellIt = sellPricesAndQuantities.begin();
-            auto matchIt = matchPricesAndQuantities.begin();
-            const auto sellEnd = sellPricesAndQuantities.end();
-            const auto matchEnd = matchPricesAndQuantities.end();
+            auto sellIt{sellPricesAndQuantities.begin()};
+            auto matchIt{matchPricesAndQuantities.begin()};
+            const auto sellEnd{sellPricesAndQuantities.end()};
+            const auto matchEnd{matchPricesAndQuantities.end()};
 
             while (found < toFind && (sellIt != sellEnd || matchIt != matchEnd)) {
                 bool chooseSell;
@@ -81,8 +81,8 @@ namespace engine {
                 }
                 else {
                     // Both available - compare and choose best
-                    const auto sellPrice = sellIt->first;
-                    const auto matchPrice = matchIt->first;
+                    const auto sellPrice{sellIt->first};
+                    const auto matchPrice{matchIt->first};
 
                     if (sellPrice < matchPrice) {
                         chooseSell = true;
@@ -99,8 +99,8 @@ namespace engine {
                     }
                 }
 
-                const auto& [chosenPrice, chosenQuantity] = *chosenIt;
-                auto fillAmount = std::min(chosenQuantity, toFind - found);
+                const auto& [chosenPrice, chosenQuantity]{*chosenIt};
+                auto fillAmount{std::min(chosenQuantity, toFind - found)};
                 found += fillAmount;
 
                 if (!chooseSell) { // Synthetic match
@@ -120,17 +120,17 @@ namespace engine {
             thisShare.fillOrder(order);
         }
         else if (order->type == OrderType::SELL) {
-            auto buyPricesAndQuantities = thisShare.getBuyPricesAndQuantities(order->leftoverQuantitiy(), order->price);
-            auto matchPricesAndQuantities = otherShare.getSellPricesAndQuantities(order->leftoverQuantitiy(), MAX_DENOMINATIONS - order->price, true);
+            auto buyPricesAndQuantities{thisShare.getBuyPricesAndQuantities(order->leftoverQuantitiy(), order->price)};
+            auto matchPricesAndQuantities{otherShare.getSellPricesAndQuantities(order->leftoverQuantitiy(), MAX_DENOMINATIONS - order->price, true)};
 
             uint64_t toFind{order->leftoverQuantitiy()};
             uint64_t found{0};
             uint64_t synthFound{0};
 
-            auto buyIt = buyPricesAndQuantities.begin();
-            auto matchIt = matchPricesAndQuantities.begin();
-            const auto buyEnd = buyPricesAndQuantities.end();
-            const auto matchEnd = matchPricesAndQuantities.end();
+            auto buyIt{buyPricesAndQuantities.begin()};
+            auto matchIt{matchPricesAndQuantities.begin()};
+            const auto buyEnd{buyPricesAndQuantities.end()};
+            const auto matchEnd{matchPricesAndQuantities.end()};
 
             while (found < toFind && (buyIt != buyEnd || matchIt != matchEnd)) {
                 bool chooseBuy;
@@ -146,8 +146,8 @@ namespace engine {
                 }
                 else {
                     // Both available - compare and choose best
-                    const auto buyPrice = buyIt->first;
-                    const auto matchPrice = matchIt->first;
+                    const auto buyPrice{buyIt->first};
+                    const auto matchPrice{matchIt->first};
 
                     if (buyPrice > matchPrice) {
                         chooseBuy = true;
@@ -164,8 +164,8 @@ namespace engine {
                     }
                 }
 
-                const auto& [chosenPrice, chosenQuantity] = *chosenIt;
-                auto fillAmount = std::min(chosenQuantity, toFind - found);
+                const auto& [chosenPrice, chosenQuantity]{*chosenIt};
+                auto fillAmount{std::min(chosenQuantity, toFind - found)};
                 found += fillAmount;
 
                 if (!chooseBuy) { // Synthetic match

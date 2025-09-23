@@ -2,6 +2,7 @@
 
 #include <string>
 #include <boost/uuid/uuid.hpp>
+#include <map>
 
 namespace database {
     struct TransactionData {

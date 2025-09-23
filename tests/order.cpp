@@ -119,7 +119,7 @@ TEST_CASE("Sell order") {
         REQUIRE(userBalance == 0 + order.totalTransactedValue());
 
         const auto transactions{getUserTransactions(userId, 0, 2)};
-        REQUIRE(transactions[0].amount == -filled);
+        REQUIRE(transactions[0].amount == -static_cast<int64_t>(filled));
         REQUIRE(transactions[0].price == 51);
         REQUIRE(transactions[0].shareId == eventData.yesShare.id);
         REQUIRE(transactions[0].userId == userId);
@@ -137,7 +137,7 @@ TEST_CASE("Sell order") {
 
         const auto transactions{getUserTransactions(userId, 1, 3)};
         REQUIRE(transactions.size() == 1);
-        REQUIRE(transactions[0].amount == -filled);
+        REQUIRE(transactions[0].amount == -static_cast<int64_t>(filled));
         REQUIRE(transactions[0].price == 50);
         REQUIRE(transactions[0].shareId == eventData.yesShare.id);
         REQUIRE(transactions[0].userId == userId);
