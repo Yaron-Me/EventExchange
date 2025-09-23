@@ -218,7 +218,7 @@ namespace database {
             query.bind(8, static_cast<std::int64_t>(order.price));
             query.bind(9, static_cast<std::int64_t>(order.quantity - order.leftoverQuantitiy()));
             query.bind(10, static_cast<std::int64_t>(order.totalTransactedValue()));
-            query.bind(11, static_cast<std::int64_t>(order.getCreatedAtUnix()));
+            query.bind(11, utility::unixToString(order.getCreatedAtUnix()));
 
             if (query.exec() == 0) {
                 std::print(std::cerr, "Error: Failed to upload finished order, no rows affected\n");

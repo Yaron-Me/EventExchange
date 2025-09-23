@@ -4,7 +4,7 @@ CREATE TABLE events (
     description TEXT,
     issued INTEGER NOT NULL DEFAULT 0,
     settled INTEGER NOT NULL DEFAULT 0 CHECK(settled IN (0, 1)),
-    created_at INTEGER DEFAULT CURRENT_TIMESTAMP
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE shares (
@@ -20,7 +20,7 @@ CREATE TABLE users (
     name TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     balance INTEGER NOT NULL,
-    created_at INTEGER DEFAULT CURRENT_TIMESTAMP
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE user_holdings (
@@ -48,7 +48,7 @@ CREATE TABLE transactions (
     share_id TEXT NOT NULL,
     quantity INTEGER NOT NULL,
     price INTEGER NOT NULL,
-    timestamp INTEGER DEFAULT CURRENT_TIMESTAMP,
+    timestamp TEXT DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (share_id) REFERENCES shares(id) ON DELETE CASCADE
 );
@@ -64,8 +64,8 @@ CREATE TABLE finished_orders (
     price INTEGER NOT NULL,
     filled_quantity INTEGER NOT NULL DEFAULT 0,
     transacted_value INTEGER NOT NULL DEFAULT 0,
-    created_at INTEGER NOT NULL,  -- Unix timestamp
-    finished_at INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at TEXT NOT NULL,
+    finished_at TEXT DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
     FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
     FOREIGN KEY (share_id) REFERENCES shares(id) ON DELETE CASCADE
