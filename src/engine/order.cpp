@@ -53,7 +53,13 @@ namespace engine {
         return quantityToFill;
     }
 
+    std::time_t Order::getCreatedAtUnix() const {
+        return std::chrono::duration_cast<std::chrono::seconds>(createdAt.time_since_epoch()).count();
+    }
+
     Order::~Order() {
-        
+        if (!userId.is_nil()) {
+            database::uploadFinishedOrder(*this);
+        }
     }
 }

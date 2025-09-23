@@ -9,7 +9,7 @@
 namespace engine {
     class Exchange {
         public:
-            bool createEvent(const boost::uuids::uuid& eventId,
+            void createEvent(const boost::uuids::uuid& eventId,
                              const boost::uuids::uuid& yesId,
                              const boost::uuids::uuid& noId);
 

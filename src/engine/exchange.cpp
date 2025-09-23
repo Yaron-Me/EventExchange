@@ -6,16 +6,15 @@
 #include "../database/user.hpp"
 
 namespace engine {
-    bool Exchange::createEvent(const boost::uuids::uuid& eventId,
+    void Exchange::createEvent(const boost::uuids::uuid& eventId,
                                const boost::uuids::uuid& yesId,
                                const boost::uuids::uuid& noId) {
         
         if (events.contains(eventId)) {
-            return false;
+            return;
         }
 
         events.emplace(eventId, Event{eventId, yesId, noId});
-        return true;
     }
 
     User& Exchange::getUser(const boost::uuids::uuid& userId) {

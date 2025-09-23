@@ -52,44 +52,13 @@ namespace engine {
 
             std::uint64_t fill(std::uint64_t quantityToFill, std::uint16_t price);
 
+            std::time_t getCreatedAtUnix() const;
+
             ~Order();
 
         private:
             std::uint64_t filledQuantity{0};
             std::uint64_t transactedValue{0};
+            std::chrono::system_clock::time_point createdAt{std::chrono::system_clock::now()};
     };
 }
-
-template<>
-struct std::formatter<engine::OrderType> {
-    constexpr auto parse(std::format_parse_context& ctx) {
-        return ctx.begin();
-    }
-    
-    template<typename FormatContext>
-    auto format(const engine::OrderType& type, FormatContext& ctx) {
-        switch (type) {
-            case engine::OrderType::BUY:
-                return std::format_to(ctx.out(), "BUY");
-            case engine::OrderType::SELL:
-                return std::format_to(ctx.out(), "SELL");
-        }
-    }
-};
-
-template<>
-struct std::formatter<engine::OrderMode> {
-    constexpr auto parse(std::format_parse_context& ctx) {
-        return ctx.begin();
-    }
-
-    template<typename FormatContext>
-    auto format(const engine::OrderMode& mode, FormatContext& ctx) {
-        switch (mode) {
-            case engine::OrderMode::MARKET:
-                return std::format_to(ctx.out(), "MARKET");
-            case engine::OrderMode::LIMIT:
-                return std::format_to(ctx.out(), "LIMIT");
-        }
-    }
-};

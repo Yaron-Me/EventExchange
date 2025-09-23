@@ -5,6 +5,7 @@
 #include "user.hpp"
 #include "utility.hpp"
 #include "../utility/uuid.hpp"
+#include "../utility/time.hpp"
 
 namespace database {
     std::tuple<bool, boost::uuids::uuid> registerUser(const std::string& username, const std::string& password) {
@@ -196,5 +197,35 @@ namespace database {
         }
         
         return transactions;
+    }
+
+    void uploadFinishedOrder(const engine::Order& order) {
+        try {
+            auto& db = getDatabase();
+
+            SQLite::Statement query{db, R"(
+                INSERT INTO finished_orders 
+                (id, user_id, order_type, order_mode, event_id, share_id, quantity, price, filled_quantity, transacted_value, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            )"};
+            query.bind(1, utility::uuidToString(order.id));
+            query.bind(2, utility::uuidToString(order.userId));
+            query.bind(3, order.type == engine::OrderType::BUY ? "BUY" : "SELL");
+            query.bind(4, order.mode == engine::OrderMode::MARKET ? "MARKET" : "LIMIT");
+            query.bind(5, utility::uuidToString(order.eventId));
+            query.bind(6, utility::uuidToString(order.shareId));
+            query.bind(7, static_cast<std::int64_t>(order.quantity));
+            query.bind(8, static_cast<std::int64_t>(order.price));
+            query.bind(9, static_cast<std::int64_t>(order.quantity - order.leftoverQuantitiy()));
+            query.bind(10, static_cast<std::int64_t>(order.totalTransactedValue()));
+            query.bind(11, static_cast<std::int64_t>(order.getCreatedAtUnix()));
+
+            if (query.exec() == 0) {
+                std::print(std::cerr, "Error: Failed to upload finished order, no rows affected\n");
+            }
+        }
+        catch (const std::exception& e) {
+            std::print(std::cerr, "Error uploading finished order: {}\n", e.what());
+        }
     }
 }
