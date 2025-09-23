@@ -43,6 +43,14 @@ namespace engine {
 
     void Event::addOrder(std::shared_ptr<Order>& order) {
         // Before we add the order we have to first match it with all other orders
+        fillOrder(order);
+
+        if (order->mode == OrderMode::LIMIT && order->leftoverQuantitiy() > 0) {
+            ((order->shareId == yes.id) ? yes : no).addOrder(order);
+        }
+    }
+
+    void Event::fillOrder(std::shared_ptr<Order>& order) {
         Share& thisShare{(order->shareId == yes.id) ? yes : no};
         Share& otherShare{(order->shareId == yes.id) ? no : yes};
 
@@ -54,76 +62,127 @@ namespace engine {
             uint64_t found{0};
             uint64_t synthFound{0};
 
-            size_t i{0};
-            size_t j{0};
-            while (found < toFind) {
-                if (sellPricesAndQuantities.size() > i && matchPricesAndQuantities.size() > j) {
-                    auto [p1, q1]{sellPricesAndQuantities[i]};
-                    auto [p2, q2]{matchPricesAndQuantities[j]};
+            auto sellIt = sellPricesAndQuantities.begin();
+            auto matchIt = matchPricesAndQuantities.begin();
+            const auto sellEnd = sellPricesAndQuantities.end();
+            const auto matchEnd = matchPricesAndQuantities.end();
 
-                    if (p1 < p2) {
-                        // buy fills sell
-                        auto t{std::min(q1, toFind - found)};
-                        found += t;
-                        i++;
-                    }
-                    else if (p2 < p1) {
-                        // buy match buy
-                        auto t{std::min(q2, toFind - found)};
-                        found += t;
-                        synthFound += t;
-                        order->fill(t, p2);
-                        j++;
-                    }
-                    else {
-                        if (q1 >= q2) {
-                            // buy fills sell
-                            auto t{std::min(q1, toFind - found)};
-                            found += t;
-                            i++;
-                        }
-                        else {
-                            // buy match buy
-                            auto t{std::min(q2, toFind - found)};
-                            found += t;
-                            synthFound += t;
-                            order->fill(t, p2);
-                            j++;
-                        }
-                    }
+            while (found < toFind && (sellIt != sellEnd || matchIt != matchEnd)) {
+                bool chooseSell;
+                std::vector<std::pair<std::uint16_t, std::uint64_t>>::iterator chosenIt;
+
+                if (sellIt == sellEnd) {
+                    chooseSell = false;
+                    chosenIt = matchIt;
                 }
-                else if (sellPricesAndQuantities.size() > i) {
-                    // buy fills sell
-                    auto [p1, q1]{sellPricesAndQuantities[i]};
-                    auto t{std::min(q1, toFind - found)};
-                    found += t;
-                    i++;
-                }
-                else if (matchPricesAndQuantities.size() > j) {
-                    // buy match buy
-                    auto [p2, q2]{matchPricesAndQuantities[j]};
-                    auto t{std::min(q2, toFind - found)};
-                    found += t;
-                    synthFound += t;
-                    order->fill(t, p2);
-                    j++;
+                else if (matchIt == matchEnd) {
+                    chooseSell = true;
+                    chosenIt = sellIt;
                 }
                 else {
-                    break;
+                    // Both available - compare and choose best
+                    const auto sellPrice = sellIt->first;
+                    const auto matchPrice = matchIt->first;
+
+                    if (sellPrice < matchPrice) {
+                        chooseSell = true;
+                        chosenIt = sellIt;
+                    }
+                    else if (matchPrice < sellPrice) {
+                        chooseSell = false;
+                        chosenIt = matchIt;
+                    }
+                    else {
+                        // Equal prices - prioritize by quantity
+                        chooseSell = (sellIt->second >= matchIt->second);
+                        chosenIt = chooseSell ? sellIt : matchIt;
+                    }
                 }
+
+                const auto& [chosenPrice, chosenQuantity] = *chosenIt;
+                auto fillAmount = std::min(chosenQuantity, toFind - found);
+                found += fillAmount;
+
+                if (!chooseSell) { // Synthetic match
+                    synthFound += fillAmount;
+                    order->fill(fillAmount, chosenPrice);
+                }
+
+                // Advance the chosen iterator
+                if (chooseSell) ++sellIt; else ++matchIt;
             }
-            otherShare.fillOrder(std::make_shared<Order>(boost::uuids::uuid{}, OrderType::SELL, OrderMode::MARKET,
-                                             order->eventId, otherShare.id,
-                                             synthFound, MAX_DENOMINATIONS - order->price));
+
+            if (synthFound > 0) {
+                otherShare.fillOrder(std::make_shared<Order>(boost::uuids::uuid{}, OrderType::SELL, OrderMode::MARKET,
+                                                 order->eventId, otherShare.id,
+                                                 synthFound, MAX_DENOMINATIONS - order->price));
+            }
             thisShare.fillOrder(order);
         }
-        // else if (order->type == OrderType::SELL) {
-        //     auto buyPricesAndQuantities = thisShare.getBuyPricesAndQuantities(order->leftoverQuantitiy(), order->price);
-        //     auto sellPricesAndQuantities = otherShare.getSellPricesAndQuantities(order->leftoverQuantitiy(), MAX_DENOMINATIONS - order->price, true);
-        // }
+        else if (order->type == OrderType::SELL) {
+            auto buyPricesAndQuantities = thisShare.getBuyPricesAndQuantities(order->leftoverQuantitiy(), order->price);
+            auto matchPricesAndQuantities = otherShare.getSellPricesAndQuantities(order->leftoverQuantitiy(), MAX_DENOMINATIONS - order->price, true);
 
-        if (order->mode == OrderMode::LIMIT && order->leftoverQuantitiy() > 0) {
-            thisShare.addOrder(order);
+            uint64_t toFind{order->leftoverQuantitiy()};
+            uint64_t found{0};
+            uint64_t synthFound{0};
+
+            auto buyIt = buyPricesAndQuantities.begin();
+            auto matchIt = matchPricesAndQuantities.begin();
+            const auto buyEnd = buyPricesAndQuantities.end();
+            const auto matchEnd = matchPricesAndQuantities.end();
+
+            while (found < toFind && (buyIt != buyEnd || matchIt != matchEnd)) {
+                bool chooseBuy;
+                std::vector<std::pair<std::uint16_t, std::uint64_t>>::iterator chosenIt;
+
+                if (buyIt == buyEnd) {
+                    chooseBuy = false;
+                    chosenIt = matchIt;
+                }
+                else if (matchIt == matchEnd) {
+                    chooseBuy = true;
+                    chosenIt = buyIt;
+                }
+                else {
+                    // Both available - compare and choose best
+                    const auto buyPrice = buyIt->first;
+                    const auto matchPrice = matchIt->first;
+
+                    if (buyPrice > matchPrice) {
+                        chooseBuy = true;
+                        chosenIt = buyIt;
+                    }
+                    else if (matchPrice > buyPrice) {
+                        chooseBuy = false;
+                        chosenIt = matchIt;
+                    }
+                    else {
+                        // Equal prices - prioritize by quantity
+                        chooseBuy = (buyIt->second >= matchIt->second);
+                        chosenIt = chooseBuy ? buyIt : matchIt;
+                    }
+                }
+
+                const auto& [chosenPrice, chosenQuantity] = *chosenIt;
+                auto fillAmount = std::min(chosenQuantity, toFind - found);
+                found += fillAmount;
+
+                if (!chooseBuy) { // Synthetic match
+                    synthFound += fillAmount;
+                    order->fill(fillAmount, chosenPrice);
+                }
+
+                // Advance the chosen iterator
+                if (chooseBuy) ++buyIt; else ++matchIt;
+            }
+
+            if (synthFound > 0) {
+                otherShare.fillOrder(std::make_shared<Order>(boost::uuids::uuid{}, OrderType::BUY, OrderMode::MARKET,
+                                                 order->eventId, otherShare.id,
+                                                 synthFound, MAX_DENOMINATIONS - order->price));
+            }
+            thisShare.fillOrder(order);
         }
     }
 }
