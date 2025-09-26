@@ -61,6 +61,6 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         -Woverloaded-virtual       # Warn about methods that override virtual methods but aren't marked virtual
         -Wpedantic                 # Reject non-standard C++
         -Wdouble-promotion         # Warn about float being implicitly promoted to double
-        -O3
+        # -O3
     )
 endif()

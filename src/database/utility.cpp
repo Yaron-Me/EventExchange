@@ -25,6 +25,8 @@ namespace database {
 
             // Enable foreign key constraints
             db.exec("PRAGMA foreign_keys = ON;");
+            // db.exec("PRAGMA journal_mode=WAL;");
+            // db.exec("PRAGMA synchronous = OFF;");
 
             std::ifstream schemaFile{"../src/database/dblayout.sql"};
             if (!schemaFile) {
@@ -66,6 +68,8 @@ namespace database {
         if (!db) {
             db = std::make_unique<SQLite::Database>(getDatabasePath(), SQLite::OPEN_READWRITE);
             db->exec("PRAGMA foreign_keys = ON;");
+            // db->exec("PRAGMA journal_mode=WAL;");
+            // db->exec("PRAGMA synchronous = OFF;");
         }
         return *db;
     }
