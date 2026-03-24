@@ -1,4 +1,7 @@
-# EventExchange - Setup
+# EventExchange
+This repository is the entire backend of a binary option exchange with matching engine, coded in c++23.
+
+# Setup
 
 ## Dependencies
 
